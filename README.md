@@ -11,7 +11,7 @@
 
 <h2>Profesores: <br>Pedro Fabián Cárdenas Herrera <br> Manuel Felipe Carranza Montenegro</h2>
 
-<h4>Nombre Integrante 1<br>
+<h4>Isaac Montes<br>
     Nombre Integrante 2<br>
     Nombre Integrante 3</h4>
 
