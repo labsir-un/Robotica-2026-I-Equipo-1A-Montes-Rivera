@@ -1,201 +1,122 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Descripción del Proyecto</title>
+<h2>Descripción detallada de la solución planteada</h2>
 
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, sans-serif;
-        background: #f5f7fa;
-        margin: 0;
-        padding: 20px;
-    }
+<p>
+La solución desarrollada implementa un sistema automatizado de decoración de una torta virtual mediante el uso de un robot industrial programado en lenguaje RAPID. El sistema integra el control de trayectorias, manejo de entradas y salidas digitales, y coordinación con una banda transportadora, permitiendo simular un proceso industrial completo.
+</p>
 
-    .container {
-        max-width: 1000px;
-        margin: auto;
-    }
+<h3>1. Arquitectura general del sistema</h3>
 
-    .card {
-        background: white;
-        border-radius: 16px;
-        padding: 25px;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        transition: transform 0.2s;
-    }
+<p>
+El programa está estructurado en un módulo principal (MODULE Module1) que contiene:
+</p>
 
-    .card:hover {
-        transform: translateY(-5px);
-    }
+<ul>
+<li>Definición de múltiples posiciones (robtarget) que representan puntos específicos en el espacio de trabajo.</li>
+<li>Un procedimiento principal (main) encargado del control lógico del sistema.</li>
+<li>Diversos procedimientos (Path_x) que encapsulan trayectorias específicas del robot.</li>
+</ul>
 
-    h1 {
-        text-align: center;
-        color: #2c3e50;
-    }
+<p>
+El sistema opera en un ciclo continuo mediante un bucle WHILE TRUE, lo que permite que el robot esté constantemente monitoreando señales de entrada digital para ejecutar diferentes rutinas.
+</p>
 
-    h2 {
-        color: #34495e;
-        border-left: 5px solid #3498db;
-        padding-left: 10px;
-    }
+<h3>2. Control por entradas digitales</h3>
 
-    h3 {
-        color: #2c3e50;
-        margin-top: 15px;
-    }
+<p>El comportamiento del sistema está gobernado por tres señales de entrada digital:</p>
 
-    p {
-        color: #555;
-        line-height: 1.6;
-    }
+<h4>Entrada DI_01 – Rutina básica</h4>
+<ul>
+<li>Se enciende una salida digital (DO_01) como indicador.</li>
+<li>El robot ejecuta la trayectoria Path_120, la cual corresponde a una posición HOME.</li>
+<li>Se apaga la salida digital.</li>
+</ul>
 
-    ul, ol {
-        color: #444;
-        padding-left: 20px;
-    }
+<p>
+Esta rutina funciona como un retorno seguro o inicialización del sistema.
+</p>
 
-    li {
-        margin-bottom: 8px;
-    }
+<h4>Entrada DI_02 – Rutina principal de decoración</h4>
 
-    .tag {
-        display: inline-block;
-        background: #3498db;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 8px;
-        font-size: 12px;
-        margin-right: 5px;
-    }
+<ul>
+<li>Activación de señal de estado: se activa DO_02 indicando operación en curso.</li>
+<li>Posicionamiento inicial: el robot se desplaza a HOME (Path_120) para iniciar desde una referencia conocida.</li>
+<li>Control de banda transportadora: se activa el movimiento hacia adelante (FWD_Conveyor), se detiene, luego se invierte (BWD_Conveyor). Se utilizan tiempos de espera (WaitTime) para simular el transporte del pastel.</li>
+<li>Ejecución de trayectorias: se ejecuta una secuencia extensa de procedimientos Path_x que representan trazos continuos sobre la superficie de la torta.</li>
+<li>Estas trayectorias combinan movimientos articulares (MoveJ), lineales (MoveL) y circulares (MoveC).</li>
+<li>Cada Path corresponde a una parte del dibujo o escritura, como letras o decoraciones.</li>
+<li>Finalización: el robot retorna a posiciones de referencia y se desactiva la señal DO_02.</li>
+</ul>
 
-    .code-block {
-        background: #2d3436;
-        color: #dfe6e9;
-        padding: 15px;
-        border-radius: 10px;
-        font-family: monospace;
-        overflow-x: auto;
-    }
+<h4>Entrada DI_03 – Modo mantenimiento</h4>
+<ul>
+<li>Se enciende DO_03.</li>
+<li>El robot se mueve a una posición de mantenimiento (Home_2) mediante Path_130.</li>
+<li>Se realiza una espera de 5 segundos.</li>
+<li>Se retorna a HOME (Path_120).</li>
+<li>Se apaga la salida digital.</li>
+</ul>
 
-    .highlight {
-        background: #ecf0f1;
-        padding: 10px;
-        border-radius: 10px;
-    }
+<p>
+Esta rutina permite manipulación segura de la herramienta.
+</p>
 
-</style>
-</head>
+<h3>3. Generación de trayectorias</h3>
 
-<body>
+<p>
+Las trayectorias están definidas mediante procedimientos modulares (Path_10, Path_20, ..., Path_360), cada uno compuesto por secuencias de movimientos:
+</p>
 
-<div class="container">
+<ul>
+<li>MoveJ (Joint Move): utilizado para desplazamientos rápidos entre puntos sin requerir precisión en la trayectoria.</li>
+<li>MoveL (Linear Move): asegura un trazo recto, ideal para dibujar líneas.</li>
+<li>MoveC (Circular Move): permite generar curvas suaves, fundamentales para decoraciones.</li>
+</ul>
 
-<h1>🤖 Decoración Automatizada con Robot Industrial</h1>
+<p>
+Los puntos (robtarget) están definidos en coordenadas cartesianas, garantizando precisión en la ejecución del dibujo.
+</p>
 
-<div class="card">
-    <h2>📌 Descripción general</h2>
-    <p>
-        El sistema implementa una solución automatizada para la decoración de una torta virtual utilizando un robot industrial programado en RAPID. Se integran trayectorias, señales digitales y control de una banda transportadora.
-    </p>
+<h3>4. Control de herramienta y sistema de referencia</h3>
 
-    <div>
-        <span class="tag">RAPID</span>
-        <span class="tag">RobotStudio</span>
-        <span class="tag">Automatización</span>
-    </div>
-</div>
+<ul>
+<li>Una herramienta personalizada (MyNewTool) que simula un marcador.</li>
+<li>Un objeto de trabajo (Workobject_1) que define la superficie de la torta.</li>
+</ul>
 
-<div class="card">
-    <h2>⚙️ Arquitectura del sistema</h2>
-    <ul>
-        <li>Definición de posiciones <code>robtarget</code></li>
-        <li>Control central en <code>main()</code></li>
-        <li>Trayectorias modulares <code>Path_x</code></li>
-        <li>Ejecución continua con <code>WHILE TRUE</code></li>
-    </ul>
-</div>
+<p>
+Esto permite que todas las trayectorias sean coherentes respecto al plano de trabajo.
+</p>
 
-<div class="card">
-    <h2>🔌 Control por entradas digitales</h2>
+<h3>5. Control de profundidad (eje Z)</h3>
 
-    <h3>DI_01 – Inicialización</h3>
-    <ul>
-        <li>Activa <code>DO_01</code></li>
-        <li>Movimiento a HOME</li>
-        <li>Desactiva salida</li>
-    </ul>
+<p>
+Se utilizan posiciones duplicadas con variaciones en el eje Z (por ejemplo Target_80 y Target_80_2):
+</p>
 
-    <h3>DI_02 – Proceso principal</h3>
-    <ul>
-        <li>Activa <code>DO_02</code></li>
-        <li>Control de banda transportadora</li>
-        <li>Ejecución completa de trayectorias</li>
-    </ul>
+<ul>
+<li>Z = 0: contacto con la superficie para dibujar.</li>
+<li>Z negativo: levantar la herramienta.</li>
+</ul>
 
-    <div class="code-block">
-Path_140 → Path_260 → Path_10 → Path_170 → Path_20 → Path_180 → ...
-    </div>
+<p>
+Esto simula el efecto real de escribir o decorar.
+</p>
 
-    <h3>DI_03 – Mantenimiento</h3>
-    <ul>
-        <li>Posición segura</li>
-        <li>Espera de 5 segundos</li>
-        <li>Retorno a HOME</li>
-    </ul>
-</div>
+<h3>6. Estrategia de solución</h3>
 
-<div class="card">
-    <h2>📍 Trayectorias del robot</h2>
-    <ul>
-        <li><b>MoveJ:</b> movimiento articular</li>
-        <li><b>MoveL:</b> movimiento lineal</li>
-        <li><b>MoveC:</b> movimiento circular</li>
-    </ul>
+<ul>
+<li>Modularidad: cada trazo es un procedimiento independiente.</li>
+<li>Reutilización: los paths pueden combinarse para formar figuras complejas.</li>
+<li>Control por eventos: el sistema responde a entradas digitales.</li>
+<li>Simulación industrial realista: incluye banda transportadora y señales.</li>
+</ul>
 
-    <p class="highlight">
-        Cada Path representa una parte del dibujo o decoración sobre la superficie.
-    </p>
-</div>
+<h3>7. Aplicación práctica</h3>
 
-<div class="card">
-    <h2>🛠️ Herramienta y referencia</h2>
-    <ul>
-        <li><code>MyNewTool</code>: marcador</li>
-        <li><code>Workobject_1</code>: plano de la torta</li>
-    </ul>
-</div>
+<ul>
+<li>Decoración automatizada de alimentos como tortas y galletas.</li>
+<li>Procesos de pintura o marcado industrial.</li>
+<li>Sistemas pick-and-place con trayectorias complejas.</li>
+</ul>
 
-<div class="card">
-    <h2>📏 Control de profundidad</h2>
-    <ul>
-        <li>Z = 0 → dibujar</li>
-        <li>Z negativo → levantar herramienta</li>
-    </ul>
-</div>
-
-<div class="card">
-    <h2>🚀 Estrategia</h2>
-    <ul>
-        <li>Modularidad</li>
-        <li>Reutilización</li>
-        <li>Control por eventos</li>
-        <li>Simulación industrial real</li>
-    </ul>
-</div>
-
-<div class="card">
-    <h2>🏭 Aplicaciones</h2>
-    <ul>
-        <li>Decoración de alimentos</li>
-        <li>Pintura automatizada</li>
-        <li>Procesos industriales</li>
-    </ul>
-</div>
-
-</div>
-
-</body>
-</html>
 
