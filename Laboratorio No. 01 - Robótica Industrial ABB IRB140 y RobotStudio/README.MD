@@ -6,7 +6,7 @@ Integra trayectorias, entradas/salidas digitales y control de banda transportado
 
 <hr>
 
-<h3>⚙️ Arquitectura del sistema</h3>
+<h3> Arquitectura del sistema</h3>
 <ul>
 <li>Definición de posiciones <code>robtarget</code></li>
 <li>Control principal en <code>main()</code></li>
@@ -16,7 +16,7 @@ Integra trayectorias, entradas/salidas digitales y control de banda transportado
 
 <hr>
 
-<h3>🔌 Control por entradas digitales</h3>
+<h3> Control por entradas digitales</h3>
 
 <h4>DI_01 – Inicialización</h4>
 <ul>
@@ -45,7 +45,7 @@ Path_140 → Path_260 → Path_10 → Path_170 → Path_20 → Path_180 → ...
 
 <hr>
 
-<h3>📍 Trayectorias del robot</h3>
+<h3> Trayectorias del robot</h3>
 <ul>
 <li><b>MoveJ:</b> movimiento articular</li>
 <li><b>MoveL:</b> movimiento lineal</li>
@@ -58,7 +58,7 @@ Cada <code>Path</code> representa una parte del dibujo o decoración.
 
 <hr>
 
-<h3>🛠️ Herramienta y referencia</h3>
+<h3> Herramienta y referencia</h3>
 <ul>
 <li><code>MyNewTool</code>: marcador</li>
 <li><code>Workobject_1</code>: superficie de la torta</li>
@@ -66,7 +66,7 @@ Cada <code>Path</code> representa una parte del dibujo o decoración.
 
 <hr>
 
-<h3>📏 Control de profundidad</h3>
+<h3> Control de profundidad</h3>
 <ul>
 <li>Z = 0 → dibujar</li>
 <li>Z negativo → levantar herramienta</li>
@@ -74,7 +74,7 @@ Cada <code>Path</code> representa una parte del dibujo o decoración.
 
 <hr>
 
-<h3>🚀 Estrategia</h3>
+<h3> Estrategia</h3>
 <ul>
 <li>Modularidad</li>
 <li>Reutilización</li>
@@ -84,7 +84,7 @@ Cada <code>Path</code> representa una parte del dibujo o decoración.
 
 <hr>
 
-<h3>🏭 Aplicaciones</h3>
+<h3> Aplicaciones</h3>
 <ul>
 <li>Decoración automatizada</li>
 <li>Pintura industrial</li>
