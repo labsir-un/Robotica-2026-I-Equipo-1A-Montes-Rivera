@@ -4,7 +4,7 @@ Sistema automatizado para la decoración de una torta virtual usando un robot in
 Integra trayectorias, entradas/salidas digitales y control de banda transportadora.
 </p>
 
-<hr>
+
 
 <h3> Arquitectura del sistema</h3>
 <ul>
@@ -14,7 +14,7 @@ Integra trayectorias, entradas/salidas digitales y control de banda transportado
 <li>Ejecución continua con <code>WHILE TRUE</code></li>
 </ul>
 
-<hr>
+
 
 <h3> Control por entradas digitales</h3>
 
