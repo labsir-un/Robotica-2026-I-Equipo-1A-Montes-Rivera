@@ -130,4 +130,47 @@ Esto simula el efecto real de escribir o decorar.
 <li>Sistemas pick-and-place con trayectorias complejas.</li>
 </ul>
 
+<h1 style="text-align: center;">Movimientos en ABB RobotStudio</h1>
 
+<h2>MoveJ (Movimiento por articulaciones)</h2>
+<p>
+El robot se mueve optimizando el giro de sus articulaciones. La trayectoria del extremo no es controlada de forma específica, por lo que puede resultar en un recorrido curvo o variable entre los puntos. Es el tipo de movimiento más rápido y se utiliza cuando solo importa llegar al punto final.
+</p>
+
+<h2>MoveL (Movimiento lineal)</h2>
+<p>
+El robot mueve la herramienta siguiendo una trayectoria recta entre dos puntos. Este tipo de movimiento garantiza precisión a lo largo de todo el recorrido, siendo fundamental en aplicaciones donde se requiere mantener una línea exacta.
+</p>
+
+<h2>MoveC (Movimiento circular)</h2>
+<p>
+El robot se desplaza siguiendo una trayectoria circular o en forma de arco. Para definir este movimiento se requieren puntos intermedios que permiten establecer la curvatura del recorrido. Se utiliza cuando se necesitan trayectorias suaves y continuas en forma curva.
+</p>
+
+<h2>Resumen</h2>
+<table style="width: 100%; border-collapse: collapse;">
+    <tr>
+        <th style="border: 1px solid black; padding: 10px;">Instrucción</th>
+        <th style="border: 1px solid black; padding: 10px;">Trayectoria</th>
+        <th style="border: 1px solid black; padding: 10px;">Velocidad</th>
+        <th style="border: 1px solid black; padding: 10px;">Aplicación</th>
+    </tr>
+    <tr>
+        <td style="border: 1px solid black; padding: 10px;">MoveJ</td>
+        <td style="border: 1px solid black; padding: 10px;">No definida (por articulaciones)</td>
+        <td style="border: 1px solid black; padding: 10px;">Alta</td>
+        <td style="border: 1px solid black; padding: 10px;">Movimiento rápido entre puntos</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid black; padding: 10px;">MoveL</td>
+        <td style="border: 1px solid black; padding: 10px;">Recta</td>
+        <td style="border: 1px solid black; padding: 10px;">Media</td>
+        <td style="border: 1px solid black; padding: 10px;">Alta precisión en el recorrido</td>
+    </tr>
+    <tr>
+        <td style="border: 1px solid black; padding: 10px;">MoveC</td>
+        <td style="border: 1px solid black; padding: 10px;">Circular</td>
+        <td style="border: 1px solid black; padding: 10px;">Media</td>
+        <td style="border: 1px solid black; padding: 10px;">Trayectorias curvas</td>
+    </tr>
+</table>
