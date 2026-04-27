@@ -1,3 +1,6 @@
+<h1 style="color: orange; text-align: center;">
+  Video Lab 1
+</h1>
 <div align="center">
   <a href="https://youtu.be/4CsLBjqpxs0">
     <img src="https://img.youtube.com/vi/4CsLBjqpxs0/0.jpg" 
