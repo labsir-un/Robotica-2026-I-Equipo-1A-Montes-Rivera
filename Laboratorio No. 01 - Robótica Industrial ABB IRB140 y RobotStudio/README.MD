@@ -1,3 +1,11 @@
+<div align="center">
+  <a href="https://youtu.be/4CsLBjqpxs0">
+    <img src="https://img.youtube.com/vi/4CsLBjqpxs0/0.jpg" 
+         alt="Video" 
+         style="width:80%; max-width:800px;">
+  </a>
+</div>
+
 <h2>Descripción detallada de la solución planteada</h2>
 
 <p>
