@@ -1,0 +1,79 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Movimientos en RobotStudio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #000;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Movimientos en ABB RobotStudio</h1>
+
+<h2>MoveJ (Movimiento por articulaciones)</h2>
+<p>
+El robot se mueve optimizando el giro de sus articulaciones. La trayectoria del extremo no es controlada de forma específica, por lo que puede resultar en un recorrido curvo o variable entre los puntos. Es el tipo de movimiento más rápido y se utiliza cuando solo importa llegar al punto final.
+</p>
+
+<h2>MoveL (Movimiento lineal)</h2>
+<p>
+El robot mueve la herramienta siguiendo una trayectoria recta entre dos puntos. Este tipo de movimiento garantiza precisión a lo largo de todo el recorrido, siendo fundamental en aplicaciones donde se requiere mantener una línea exacta.
+</p>
+
+<h2>MoveC (Movimiento circular)</h2>
+<p>
+El robot se desplaza siguiendo una trayectoria circular o en forma de arco. Para definir este movimiento se requieren puntos intermedios que permiten establecer la curvatura del recorrido. Se utiliza cuando se necesitan trayectorias suaves y continuas en forma curva.
+</p>
+
+<h2>Resumen</h2>
+<table>
+    <tr>
+        <th>Instrucción</th>
+        <th>Trayectoria</th>
+        <th>Velocidad</th>
+        <th>Aplicación</th>
+    </tr>
+    <tr>
+        <td>MoveJ</td>
+        <td>No definida (por articulaciones)</td>
+        <td>Alta</td>
+        <td>Movimiento rápido entre puntos</td>
+    </tr>
+    <tr>
+        <td>MoveL</td>
+        <td>Recta</td>
+        <td>Media</td>
+        <td>Alta precisión en el recorrido</td>
+    </tr>
+    <tr>
+        <td>MoveC</td>
+        <td>Circular</td>
+        <td>Media</td>
+        <td>Trayectorias curvas</td>
+    </tr>
+</table>
+
+</body>
+</html>
