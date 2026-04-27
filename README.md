@@ -12,7 +12,7 @@
 <h2>Profesores: <br>Pedro Fabián Cárdenas Herrera <br> Manuel Felipe Carranza Montenegro</h2>
 
 <h4>Isaac Montes<br>
-    Nombre Integrante 2
+   Jesus Rivera Molina
 </h4>
 
 <p>
