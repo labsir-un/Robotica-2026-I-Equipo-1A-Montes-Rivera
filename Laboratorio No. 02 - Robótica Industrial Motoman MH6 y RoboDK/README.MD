@@ -1,3 +1,5 @@
+https://youtu.be/ERJf6F7LVco
+
 ## 1. Análisis y Cuadros Comparativos
 
 ### 1.1 Comparación de Manipuladores: Motoman MH6 vs. ABB IRB 140
