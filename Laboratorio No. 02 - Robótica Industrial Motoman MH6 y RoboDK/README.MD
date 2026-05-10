@@ -50,7 +50,7 @@ El manipulador Motoman MH6, operado mediante el controlador DX100, cuenta típic
 * **Home 1 (Posición de Calibración / Cero Articular):** En esta configuración, todos los ejes del robot (S, L, U, R, B, T) se encuentran alineados en su posición de cero absolutos (**0°**). Visualmente, el robot suele estar con el brazo extendido hacia adelante o en una postura rígida vertical (dependiendo del engranaje del eje U).
 
 <p align="center">
-  <img src="img/resultado.png" width="500">
+  <img src="img/Home 1.jpeg" width="500">
 </p>
 
 * **Home 2 (Posición de Reposo / Plegada):** Es una configuración de trabajo segura pre-programada donde el brazo se encuentra plegado sobre sí mismo. Las coordenadas articulares típicas forman ángulos agudos u ortogonales (por ejemplo, el eje L reclinado hacia atrás y el eje U hacia adelante), manteniendo el efector final apuntando hacia abajo y cerca del cuerpo principal.
