@@ -53,6 +53,8 @@ El manipulador Motoman MH6, operado mediante el controlador DX100, cuenta típic
 
 * **Home 2 (Posición de Reposo / Plegada):** Es una configuración de trabajo segura pre-programada donde el brazo se encuentra plegado sobre sí mismo. Las coordenadas articulares típicas forman ángulos agudos u ortogonales (por ejemplo, el eje L reclinado hacia atrás y el eje U hacia adelante), manteniendo el efector final apuntando hacia abajo y cerca del cuerpo principal.
 
+![Imagen](https://github.com/labsir-un/Robotica-2026-I-Equipo-1A-Montes-Rivera/blob/main/Laboratorio%20No.%2002%20-%20Rob%C3%B3tica%20Industrial%20Motoman%20MH6%20y%20RoboDK/Home2.jpeg?raw=true)
+
 **Justificación Analítica: ¿Cuál posición es mejor?**
 Analíticamente, la configuración **Home 2** resulta ser muy superior y es la preferida como punto de inicio y fin de las rutinas de trabajo. Las razones cinemáticas y dinámicas son:
 1. **Minimización de Torques Estáticos:** Al estar el brazo plegado, el centro de masa de la cadena cinemática se ubica mucho más cerca del eje vertical de la base (Eje S). Esto reduce significativamente el brazo de palanca y, por consiguiente, el torque estático que los servomotores de los ejes S, L y U deben contrarrestar por acción de la gravedad.
