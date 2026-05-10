@@ -1,4 +1,14 @@
-https://youtu.be/ERJf6F7LVco
+<h1 style="color: orange; text-align: center;">
+  Video Lab 1
+</h1>
+
+<div align="center">
+  <a href="https://youtu.be/ERJf6F7LVco">
+    <img src="https://img.youtube.com/vi/ERJf6F7LVco/0.jpg" 
+         alt="Video" 
+         style="width:80%; max-width:800px;">
+  </a>
+</div>
 
 ## 1. Análisis y Cuadros Comparativos
 
