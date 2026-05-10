@@ -1,5 +1,5 @@
 <h1 style="color: orange; text-align: center;">
-  Video Lab 1
+  Video Lab 2
 </h1>
 
 <div align="center">
