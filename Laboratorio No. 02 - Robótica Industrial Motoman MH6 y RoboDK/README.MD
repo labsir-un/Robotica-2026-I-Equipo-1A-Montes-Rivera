@@ -92,3 +92,9 @@ Para evitar colisiones y mover el robot con precisión, es vital ajustar la velo
    * **Low (Lenta):** Ideal para acercamientos finales o cuando se está muy cerca de un obstáculo.
    * **Medium (Media):** Velocidad estándar de operación manual.
    * **High (Alta):** Permite movimientos rápidos por articulación (limitada por software por seguridad en modo manual a no más de 250mm/s típicamente).
+
+#### Diagrama De Flujo 
+
+![Imagen](https://github.com/labsir-un/Robotica-2026-I-Equipo-1A-Montes-Rivera/blob/main/Laboratorio%20No.%2002%20-%20Rob%C3%B3tica%20Industrial%20Motoman%20MH6%20y%20RoboDK/Diagrama%20de%20Flujo%20Inicio.jpeg?raw=true)
+![Imagen]()
+![Imagen]()
