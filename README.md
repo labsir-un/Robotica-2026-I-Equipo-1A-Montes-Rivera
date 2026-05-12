@@ -73,21 +73,14 @@ Aquí se documentan los laboratorios, avances, resultados y la presentación de 
   <img src="./assets/integrantes/integrante2.jpg" alt="Foto integrante 2" style="border-radius: 50%; width: 180px;"><br>
 </div>
 
-- **Nombre completo:** Nombre Apellido
+- **Nombre completo:** Jesus Alberto Rivera Molina
 - **Carrera:** Ingeniería Mecatrónica
-- **Correo institucional:** nombre@unal.edu.co
-- **Usuario de GitHub:** [usuariogithub](https://github.com/usuariogithub)
+- **Correo institucional:** jriveramo@unal.edu.co
+- **Usuario de GitHub:** Riv28
 - **Rol en el equipo:** Ej. Modelado, programación, control
 - **Intereses:** Manipulación, ROS 2, control de robots
 - **Descripción breve:**  
   Escribe aquí una breve presentación personal y académica del integrante.
-
----
-
-### Integrante 3
-<div align="center">
-  <img src="./assets/integrantes/integrante3.jpg" alt="Foto integrante 3" style="border-radius: 50%; width: 180px;"><br>
-</div>
 
 - **Nombre completo:** Nombre Apellido
 - **Carrera:** Ingeniería Mecatrónica
