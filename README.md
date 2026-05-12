@@ -81,13 +81,3 @@ Aquí se documentan los laboratorios, avances, resultados y la presentación de 
 - **Intereses:** Manipulación, ROS 2, control de robots
 - **Descripción breve:**  
   Escribe aquí una breve presentación personal y académica del integrante.
-
-- **Nombre completo:** Nombre Apellido
-- **Carrera:** Ingeniería Mecatrónica
-- **Correo institucional:** nombre@unal.edu.co
-- **Usuario de GitHub:** [usuariogithub](https://github.com/usuariogithub)
-- **Rol en el equipo:** Ej. Documentación, pruebas, simulación
-- **Intereses:** Robótica industrial, sistemas autónomos, IA
-- **Descripción breve:**  
-  Escribe aquí una breve presentación personal y académica del integrante.
-
