@@ -57,3 +57,47 @@ Esta es una de las configuraciones de seguridad más utilizadas en celdas de man
 1.  **Home Lateral de Seguridad (Side Park):** Al girar 90° a la izquierda y retraer el eje Z, el robot se "quita de en medio" de la zona central de trabajo. Esto permite que un operador humano pueda meter las manos al frente de la máquina de forma segura, o que pasen cajas/piezas por una banda transportadora central sin riesgo de que choquen con el robot mientras este descansa.
 
 2.  **Prevención de colisiones al arrancar:** Al iniciar el día o tras un paro de emergencia, si el operario presiona "Home", el robot primero subirá el eje Z (porque está en `0`) y luego girará hacia la izquierda. Esto garantiza que la herramienta no arrastrará ni golpeará ningún componente o producto que se haya quedado a medio procesar en la mesa de trabajo.
+
+# Procedimiento para Movimientos Manuales (Jogging) - EPSON T3-401S
+
+Para realizar movimientos manuales en el robot **EPSON T3-401S**, se utiliza la interfaz virtual del software **EPSON RC+** desde una computadora conectada al manipulador. Al ser un robot de tipo *All-in-One*, carece de una consola física (*Teach Pendant*) por defecto, por lo que todo el control se realiza mediante software.
+
+---
+
+## Paso 1: Abrir la ventana de Movimiento Manual (Jog & Teach)
+
+1. Encienda el controlador y el robot. Posteriormente, ejecute el software **EPSON RC+** en su computadora.
+2. Asegúrese de que el entorno esté conectado en modo **Online** con el robot.
+3. En la barra de herramientas superior, haga clic en el icono **Jog & Teach** (representado por un robot con una mano) o presione la combinación de teclas `Ctrl + J`.
+4. Se abrirá la ventana de control denominada *Jog & Teach*.
+
+---
+
+## Paso 2: Encender Motores (Motor ON)
+
+Por motivos de seguridad, los servomotores arrancan en estado desenergizado. Antes de desplazar el robot, es necesario habilitarlos:
+
+1. En la ventana de *Jog & Teach*, localice el botón etiquetado como **Motor On**.
+2. Al hacer clic, se escucharán los frenos físicos liberándose en la base del manipulador y el indicador de estado en la pantalla cambiará a color **verde**.
+
+---
+
+## Paso 3: Selección del Modo de Operación (Coordenadas)
+
+En la sección **Mode** o **Coordinate System**, se debe conmutar el tipo de trayectoria matemática que ejecutará el robot:
+
+### Opción A: Modo Articulaciones (Joint)
+* **Descripción:** Cada control físico o virtual actúa sobre un motor de forma independiente, ignorando la geometría cartesiana del espacio.
+* **Comportamiento de los ejes:**
+  * **J1 / J2:** Rotan de forma independiente el brazo de la base y el codo (valores en grados).
+  * **J3:** Desplaza el vástago vertical hacia arriba o hacia abajo (valores en milímetros).
+  * **J4:** Rota la herramienta en el extremo (eje U) en grados.
+
+### Opción B: Modo Cartesiano (Base / World)
+* **Descripción:** El software calcula la cinemática inversa en tiempo real para que el extremo de la herramienta se desplace en líneas rectas perfectas siguiendo el plano tridimensional de la celda de trabajo.
+
+---
+
+## Paso 4: Ejecución de Movimientos, Traslaciones y Rotaciones
+
+Una vez seleccionado el modo, se habilitará el panel de botones con direcciones positivas
