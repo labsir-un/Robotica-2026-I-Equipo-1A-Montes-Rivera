@@ -389,4 +389,7 @@ Se Uso el Bit #9 llamado Succ con logica negada para encender y apagar el grippe
 
 ![Interfaz Principal EPSON RC+](https://raw.githubusercontent.com/labsir-un/Robotica-2026-I-Equipo-1A-Montes-Rivera/main/Laboratorio%20No.%2003%20-%20Rob%C3%B3tica%20Industrial%20EPSON%20T3%20401S%20y%20EPSON%20RC%2B/Main.png)
 
+## Plano de Planta 
+
+![Plano de Planta](https://raw.githubusercontent.com/labsir-un/Robotica-2026-I-Equipo-1A-Montes-Rivera/main/Laboratorio%20No.%2003%20-%20Rob%C3%B3tica%20Industrial%20EPSON%20T3%20401S%20y%20EPSON%20RC%2B/plano-de-planta.jpeg)
 
