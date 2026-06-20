@@ -117,7 +117,6 @@ El software categoriza formalmente estos rangos en tres niveles operativos:
 * **Nivel Alto (High): Rango operativo estándar de 51% a 100%.**
     * *Aplicación:* Restringido exclusivamente para desplazamientos a través de grandes distancias dentro de un espacio de trabajo libre de obstrucciones. 
 
-> **Nota técnica:** Los valores porcentuales exactos asignados a las etiquetas *Low*, *Med* y *High* son variables del sistema modificables por el administrador a través de la ruta `Setup -> Robot Manager -> Control Panel` en las preferencias globales del software.
 
 ---
 
