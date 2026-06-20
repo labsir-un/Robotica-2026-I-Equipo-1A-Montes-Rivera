@@ -137,28 +137,103 @@ Para cumplir con las normativas de seguridad industrial, el entorno EPSON RC+ di
 
 
 
-1.  **Indicador en el Campo de Texto de Jog Speed:** La casilla de edición numérica dentro de la ventana *Jog & Teach* muestra de forma explícita el valor porcentual activo. Si el valor visualizado es `5`, el manipulador se desplazará a un 5% de la velocidad máxima configurada para el modo manual.
-2.  **Estado del Botón de Selección Dinámica:** El botón correspondiente a la categoría activa (*Low*, *Med* o *High*) se mostrará en estado seleccionado o resaltado cromáticamente sobre los demás.
-3.  **Barra de Estado Inferior del Sistema:** En el extremo inferior de la pantalla principal de EPSON RC+, el sistema despliega permanentemente un resumen de telemetría del robot conectado. Este apartado incluye el modo de coordenadas actual, el estado de los motores y el porcentaje de velocidad de jog asignado globalmente.
-4.  **Verificación mediante Línea de Comandos (Terminal):** A través de la ventana de comandos (*Command Window*), el operador puede realizar una consulta directa al controlador ejecutando la instrucción:
-    ```epson
-    > JogSpeed
-    ```
-    El sistema devolverá un número entero en la consola que representa el porcentaje de velocidad configurado en ese instante.
+# 1. Principales Funcionalidades de EPSON RC+ 7.0
 
----
+## A. Entorno de Desarrollo (IDE) y Lenguaje SPEL+
 
-. Principales Funcionalidades de EPSON RC+ 7.0A. Entorno de Desarrollo (IDE) y Lenguaje SPEL+El software integra un editor de código optimizado para SPEL+, un lenguaje de programación de alto nivel, multitarea y estructurado desarrollado propiamente por EPSON. El IDE incluye:Herramientas de depuración (debugging) en tiempo real.Puntos de interrupción (breakpoints).Ejecución paso a paso.Un compilador sintáctico que detecta errores antes de la transferencia de datos al controlador.B. Gestor del Robot (Robot Manager)Es el núcleo de configuración de los parámetros físicos del manipulador. Permite realizar:Calibración y definición del origen de los encoders (Hof).Configuración de herramientas y sistemas de coordenadas locales (TCP - Tool Center Point).Definición de límites de software (Soft Limits) para prevenir colisiones mecánicas accidentales.Gestión de la posición de inicio personalizada (HomeDef).C. Simulador 3D AvanzadoPermite modelar celdas de manufactura completas sin necesidad de hardware físico. Ofrece:Detección virtual de colisiones.Cálculo de tiempos de ciclo estimados.Validación del espacio de trabajo (Workspace).Facilitación de la ingeniería preliminar, reduciendo significativamente los riesgos de puesta en marcha.D. Gestión de Entradas/Salidas (I/O) y ConectividadProporciona una interfaz para mapear, monitorear y forzar señales digitales y de buses de campo (como EtherNet/IP, PROFINET o DeviceNet). Asimismo, permite integrar sistemas de visión artificial embebidos (Vision Guide) para el guiado de robots mediante cámaras.2. Mecanismos de Comunicación con el ManipuladorEn el caso específico del robot EPSON T3-401S, el controlador está integrado físicamente en la base del propio manipulador (All-in-One). La comunicación entre la computadora host (donde corre EPSON RC+ 7.0) y el robot se realiza bajo la siguiente arquitectura:Plaintext[ Computadora Host (EPSON RC+ 7.0) ] 
+El software integra un editor de código optimizado para **SPEL+**, un lenguaje de programación de alto nivel, multitarea y estructurado desarrollado por EPSON.
+
+El IDE incluye:
+
+- Herramientas de depuración (*debugging*) en tiempo real.
+- Puntos de interrupción (*breakpoints*).
+- Ejecución paso a paso.
+- Compilador sintáctico que detecta errores antes de la transferencia de datos al controlador.
+
+## B. Gestor del Robot (Robot Manager)
+
+Es el núcleo de configuración de los parámetros físicos del manipulador.
+
+Permite realizar:
+
+- Calibración y definición del origen de los encoders (*Hof*).
+- Configuración de herramientas y sistemas de coordenadas locales (*TCP - Tool Center Point*).
+- Definición de límites de software (*Soft Limits*) para prevenir colisiones mecánicas accidentales.
+- Gestión de la posición de inicio personalizada (*HomeDef*).
+
+## C. Simulador 3D Avanzado
+
+Permite modelar celdas de manufactura completas sin necesidad de hardware físico.
+
+Ofrece:
+
+- Detección virtual de colisiones.
+- Cálculo de tiempos de ciclo estimados.
+- Validación del espacio de trabajo (*Workspace*).
+- Facilitación de la ingeniería preliminar, reduciendo significativamente los riesgos de puesta en marcha.
+
+## D. Gestión de Entradas/Salidas (I/O) y Conectividad
+
+Proporciona una interfaz para mapear, monitorear y forzar señales digitales y de buses de campo (como EtherNet/IP, PROFINET o DeviceNet).
+
+Asimismo, permite integrar sistemas de visión artificial embebidos (*Vision Guide*) para el guiado de robots mediante cámaras.
+
+# 2. Mecanismos de Comunicación con el Manipulador
+
+En el caso específico del robot **EPSON T3-401S**, el controlador está integrado físicamente en la base del propio manipulador (*All-in-One*).
+
+La comunicación entre la computadora host (donde corre EPSON RC+ 7.0) y el robot se realiza bajo la siguiente arquitectura:
+
+```text
+[ Computadora Host (EPSON RC+ 7.0) ]
                  │
                  ▼  (Capa Física: Ethernet TCP/IP o USB)
 [ Interfaz de Red del Controlador Embebido ]
                  │
                  ▼  (Procesador de Control de Movimiento)
 [ Drivers / Servoamplificadores Internos ] ──▶ [ Motores del Robot ]
-A. Capa Física y Protocolo de RedLa comunicación se establece principalmente a través de un enlace Ethernet estándar mediante el protocolo TCP/IP (o alternativamente mediante una conexión directa USB). Se asigna una dirección IP estática al controlador del robot para asegurar un canal de datos dedicado y de baja latencia.B. Modelo Host-ControladorModo de Desarrollo / Monitor: Cuando el programador interactúa con la interfaz gráfica (por ejemplo, realizando Jogging o modificando parámetros), EPSON RC+ 7.0 envía comandos en formato de cadena de texto estructurada a través de sockets TCP/IP. El controlador embebido recibe, interpreta y ejecuta la acción de forma inmediata.Modo de Ejecución Autónomo: Una vez finalizado el código en SPEL+, este se compila y se descarga directamente en la memoria no volátil del controlador embebido del robot. A partir de ese momento, el robot puede operar de manera autónoma sin necesidad de mantener la computadora host conectada, procesando la lógica internamente.C. Lazo de Realimentación (Feedback)Durante la operación, el controlador envía de vuelta al software host un flujo continuo de datos de telemetría a alta frecuencia. Este flujo incluye:Las posiciones actuales de los encoders de las articulaciones.Vectores de fuerza estimados.Estados de error.El estado de las líneas de seguridad (Safety Circuit).3. Procesos Internos para la Ejecución de MovimientosCuando el controlador recibe una instrucción de movimiento en código SPEL+ (por ejemplo, un comando lineal Move P1 o un comando de interpolación SCARA Jump P2), se desencadena una secuencia cíclica y determinista de procesos matemáticos y electrónicos:Plaintext[ Comando SPEL+ (ej. Move P1) ]
+```
+
+## A. Capa Física y Protocolo de Red
+
+La comunicación se establece principalmente a través de un enlace Ethernet estándar mediante el protocolo TCP/IP (o alternativamente mediante una conexión directa USB).
+
+Se asigna una dirección IP estática al controlador del robot para asegurar un canal de datos dedicado y de baja latencia.
+
+## B. Modelo Host-Controlador
+
+### Modo de Desarrollo / Monitor
+
+Cuando el programador interactúa con la interfaz gráfica (por ejemplo, realizando *Jogging* o modificando parámetros), EPSON RC+ 7.0 envía comandos en formato de cadena de texto estructurada a través de sockets TCP/IP.
+
+El controlador embebido recibe, interpreta y ejecuta la acción de forma inmediata.
+
+### Modo de Ejecución Autónomo
+
+Una vez finalizado el código en SPEL+, este se compila y se descarga directamente en la memoria no volátil del controlador embebido del robot.
+
+A partir de ese momento, el robot puede operar de manera autónoma sin necesidad de mantener la computadora host conectada, procesando la lógica internamente.
+
+## C. Lazo de Realimentación (Feedback)
+
+Durante la operación, el controlador envía de vuelta al software host un flujo continuo de datos de telemetría a alta frecuencia.
+
+Este flujo incluye:
+
+- Las posiciones actuales de los encoders de las articulaciones.
+- Vectores de fuerza estimados.
+- Estados de error.
+- El estado de las líneas de seguridad (*Safety Circuit*).
+
+# 3. Procesos Internos para la Ejecución de Movimientos
+
+Cuando el controlador recibe una instrucción de movimiento en código SPEL+ (por ejemplo, un comando lineal `Move P1` o un comando de interpolación SCARA `Jump P2`), se desencadena una secuencia cíclica y determinista de procesos matemáticos y electrónicos:
+
+```text
+[ Comando SPEL+ (ej. Move P1) ]
                │
                ▼
-1. Interpretación y "Parsing" del Comando
+1. Interpretación y Parsing del Comando
                │
                ▼
 2. Planificación de la Trayectoria (Perfil de velocidad Curva en S)
@@ -168,4 +243,49 @@ A. Capa Física y Protocolo de RedLa comunicación se establece principalmente a
                │
                ▼
 4. Lazo de Servocontrol (PID, Generación de PWM y Feedback del Encoder)
-1. Interpretación y Parsing del ComandoEl procesador interno del controlador decodifica la línea de comando. Identifica el tipo de trayectoria solicitada (articular, lineal o arco), las coordenadas del punto de destino (definidas en pulsos o milímetros) y los modificadores de velocidad (Speed) y aceleración (Accel).2. Planificación de la Trayectoria (Generación de Perfiles)El algoritmo de control calcula el perfil de movimiento óptimo en el tiempo. Utiliza perfiles de velocidad de aceleración/desaceleración controlada (típicamente curvas trapezoidales o en forma de S — S-Curve) para suavizar el movimiento, minimizar las fuerzas de inercia y evitar vibraciones que degraden la vida útil de los reductores mecánicos.3. Transformación Cinemática (Cinemática Inversa)Dado que los puntos suelen programarse en coordenadas cartesianas del espacio de trabajo $(X, Y, Z, U)$, el procesador ejecuta las ecuaciones de cinemática inversa. Este proceso matemático traduce las trayectorias cartesianas continuas en valores angulares y lineales específicos para cada una de las 4 articulaciones del robot SCARA, convirtiendo finalmente dichos valores en pulsos de encoder digitales.4. Lazo de Servocontrol (Servo Loop)Una vez calculados los pulsos objetivo para cada intervalo de muestreo (frecuencia de lazo cerrado típicamente en el rango de los kHz), las señales se envían a los servoamplificadores internos:Los servoamplificadores modulan la corriente eléctrica (mediante PWM) enviada a los servomotores síncronos brushless de cada eje.A medida que los motores giran, los encoders absolutos acoplados a los ejes miden la posición real del brazo y la devuelven al controlador.Un algoritmo de control PID (Proporcional-Integral-Derivativo) compara la posición real con la posición teórica calculada, corrigiendo instantáneamente cualquier error de seguimiento para garantizar que el robot alcance el punto exacto con la repetibilidad milimétrica especificada.
+```
+
+## 1. Interpretación y Parsing del Comando
+
+El procesador interno del controlador decodifica la línea de comando.
+
+Identifica:
+
+- El tipo de trayectoria solicitada (articular, lineal o arco).
+- Las coordenadas del punto de destino (definidas en pulsos o milímetros).
+- Los modificadores de velocidad (`Speed`) y aceleración (`Accel`).
+
+## 2. Planificación de la Trayectoria (Generación de Perfiles)
+
+El algoritmo de control calcula el perfil de movimiento óptimo en el tiempo.
+
+Utiliza perfiles de velocidad de aceleración/desaceleración controlada (típicamente curvas trapezoidales o en forma de S, *S-Curve*) para:
+
+- Suavizar el movimiento.
+- Minimizar las fuerzas de inercia.
+- Evitar vibraciones que degraden la vida útil de los reductores mecánicos.
+
+## 3. Transformación Cinemática (Cinemática Inversa)
+
+Dado que los puntos suelen programarse en coordenadas cartesianas del espacio de trabajo $(X, Y, Z, U)$, el procesador ejecuta las ecuaciones de cinemática inversa.
+
+Este proceso matemático:
+
+- Traduce las trayectorias cartesianas continuas en valores angulares y lineales específicos para cada una de las cuatro articulaciones del robot SCARA.
+- Convierte dichos valores en pulsos de encoder digitales.
+
+## 4. Lazo de Servocontrol (Servo Loop)
+
+Una vez calculados los pulsos objetivo para cada intervalo de muestreo (frecuencia de lazo cerrado típicamente en el rango de los kHz), las señales se envían a los servoamplificadores internos.
+
+### Funcionamiento
+
+1. Los servoamplificadores modulan la corriente eléctrica mediante PWM enviada a los servomotores síncronos *brushless* de cada eje.
+
+2. A medida que los motores giran, los encoders absolutos acoplados a los ejes miden la posición real del brazo y la devuelven al controlador.
+
+3. Un algoritmo de control PID (Proporcional–Integral–Derivativo) compara la posición real con la posición teórica calculada, corrigiendo instantáneamente cualquier error de seguimiento.
+
+### Resultado
+
+El robot alcanza el punto exacto con la repetibilidad milimétrica especificada por el fabricante.
