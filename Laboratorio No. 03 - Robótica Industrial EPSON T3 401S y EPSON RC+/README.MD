@@ -60,7 +60,7 @@ Esta es una de las configuraciones de seguridad más utilizadas en celdas de man
 
 # Procedimiento para Movimientos Manuales (Jogging) - EPSON T3-401S
 
-Para realizar movimientos manuales en el robot **EPSON T3-401S**, se utiliza la interfaz virtual del software **EPSON RC+** desde una computadora conectada al manipulador. Al ser un robot de tipo *All-in-One*, carece de una consola física (*Teach Pendant*) por defecto, por lo que todo el control se realiza mediante software.
+Para realizar movimientos manuales en el robot **EPSON T3-401S**, se utiliza la interfaz virtual del software **EPSON RC+** desde una computadora conectada al manipulador. El epson del laboratorio carece de una consola física (*Teach Pendant*), por lo que todo el control se realiza mediante software.
 
 ---
 
