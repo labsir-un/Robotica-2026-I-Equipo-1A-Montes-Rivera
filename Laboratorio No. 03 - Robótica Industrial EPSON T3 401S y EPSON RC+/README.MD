@@ -3,20 +3,16 @@
 
 # Configuración de Posición Home - EPSON T3-401S
 
-## 2. Descripción física de la postura actual de tu robot
+## 1. Descripción física de la postura
 
-Con esta configuración guardada en el comando `HomeDef`, cuando mandes al robot a su posición de inicio ejecutando el comando `Home`, se colocará en la siguiente posición exacta:
+cuando se manda al robot a su posición de inicio ejecutando el comando `Home`, se colocará en la siguiente posición exacta:
 
 * **J1 (Base) = 204800 pulsos (90°):** El cuerpo o primer brazo del robot no apunta hacia el frente, sino que está apuntando completamente hacia la izquierda (alineado de forma paralela al eje Y positivo del robot).
 * **J2 (Codo) = 0 pulsos (0°):** El segundo brazo está completamente estirado en línea recta respecto al primer brazo. No tiene ningún doblez en el codo.
 * **J3 (Eje Z Vertical) = 0 pulsos (0 mm):** El eje vertical se encuentra en su punto más alto posible (retraído). La pinza o herramienta está levantada al máximo para evitar chocar con nada en la mesa de trabajo.
 * **J4 (Eje U Rotación) = 0 pulsos (0°):** El giro final de la punta de la herramienta se encuentra en su ángulo de referencia inicial.
 
-> **Resumen visual:** Verás al robot completamente estirado hacia tu izquierda y con el eje Z totalmente arriba.
-
----
-
-## 3. ¿Por qué el programador configuró el Home así?
+## 2. ¿Por qué el programador configuró el Home así?
 
 Esta es una de las configuraciones de seguridad más utilizadas en celdas de manufactura automatizada por las siguientes razones:
 
