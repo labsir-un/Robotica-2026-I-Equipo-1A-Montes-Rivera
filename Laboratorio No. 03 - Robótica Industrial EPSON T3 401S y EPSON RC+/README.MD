@@ -101,3 +101,55 @@ En la sección **Mode** o **Coordinate System**, se debe conmutar el tipo de tra
 ## Paso 4: Ejecución de Movimientos, Traslaciones y Rotaciones
 
 Una vez seleccionado el modo, se habilitará el panel de botones con direcciones positivas
+
+# Informe Técnico: Control y Configuración de los Niveles de Velocidad en Movimientos Manuales (Jogging) - EPSON T3-401S
+
+## 1. Clasificación de los Niveles de Velocidad Manual
+
+En el entorno de programación **EPSON RC+**, la velocidad durante los movimientos manuales (*Jogging*) está estrictamente regulada para garantizar la integridad del personal operativo y la preservación mecánica del manipulador EPSON T3-401S. A diferencia del modo automático, el movimiento manual impone restricciones de potencia basándose en un porcentaje (%) de la velocidad máxima de jog programada en el sistema.
+
+El software categoriza formalmente estos rangos en tres niveles operativos:
+
+* **Nivel Bajo (Low): Rango operativo estándar de 1% a 10%.**
+    * *Aplicación:* Utilizado para la aproximación de alta precisión a puntos de trabajo específicos (*Teaching*), calibración del sistema de coordenadas de la herramienta (TCP) o manipulación en la cercanía inmediata de obstáculos mecánicos (herramental, tolvas o sensores de la celda).
+* **Nivel Medio (Med): Rango operativo estándar de 11% a 50%.**
+    * *Aplicación:* Orientado a la verificación visual de trayectorias generales fuera de zonas críticas de colisión, o para el despeje del manipulador tras la activación de una parada de emergencia.
+* **Nivel Alto (High): Rango operativo estándar de 51% a 100%.**
+    * *Aplicación:* Restringido exclusivamente para desplazamientos a través de grandes distancias dentro de un espacio de trabajo libre de obstrucciones. 
+
+> **Nota técnica:** Los valores porcentuales exactos asignados a las etiquetas *Low*, *Med* y *High* son variables del sistema modificables por el administrador a través de la ruta `Setup -> Robot Manager -> Control Panel` en las preferencias globales del software.
+
+---
+
+## 2. Procedimiento Operativo para la Modificación de Niveles de Velocidad
+
+La modificación de la velocidad de jog se realiza de manera interactiva y en tiempo real (en caliente), sin requerir la desenergización de los servomotores. El proceso documentado es el siguiente:
+
+1.  **Acceso a la interfaz:** Despliegue la ventana de control manual mediante la combinación de comandos `Ctrl + J` o seleccionando el icono **Jog & Teach** en la barra de herramientas principal de EPSON RC+.
+2.  **Localización del panel de control:** Ubique la sección indexada como **Jog Speed**, situada comúnmente en la sección inferior de la interfaz gráfica del panel de control manual.
+3.  **Método de selección indexada (Ajuste rápido):** Seleccione mediante un clic el botón radial correspondiente al nivel requerido (*Low*, *Med* o *High*). El sistema cargará inmediatamente el valor porcentual predeterminado de fábrica para dicha categoría.
+4.  **Método de selección directa (Ajuste fino):** Para configuraciones personalizadas independientes de los tres niveles estándar, desplace la barra analógica (*Slider*) o introduzca un valor entero directamente en el campo numérico porcentual (por ejemplo, `5` para fijar el límite al 5% de la capacidad de jog). La instrucción entrará en vigor en el siguiente pulso de movimiento ejecutado.
+
+---
+
+## 3. Métodos de Identificación del Nivel de Velocidad Establecido
+
+Para cumplir con las normativas de seguridad industrial, el entorno EPSON RC+ dispone de cuatro mecanismos concurrentes para verificar el estado de velocidad activo antes y durante la manipulación física del brazo robótico:
+
+
+
+1.  **Indicador en el Campo de Texto de Jog Speed:** La casilla de edición numérica dentro de la ventana *Jog & Teach* muestra de forma explícita el valor porcentual activo. Si el valor visualizado es `5`, el manipulador se desplazará a un 5% de la velocidad máxima configurada para el modo manual.
+2.  **Estado del Botón de Selección Dinámica:** El botón correspondiente a la categoría activa (*Low*, *Med* o *High*) se mostrará en estado seleccionado o resaltado cromáticamente sobre los demás.
+3.  **Barra de Estado Inferior del Sistema:** En el extremo inferior de la pantalla principal de EPSON RC+, el sistema despliega permanentemente un resumen de telemetría del robot conectado. Este apartado incluye el modo de coordenadas actual, el estado de los motores y el porcentaje de velocidad de jog asignado globalmente.
+4.  **Verificación mediante Línea de Comandos (Terminal):** A través de la ventana de comandos (*Command Window*), el operador puede realizar una consulta directa al controlador ejecutando la instrucción:
+    ```epson
+    > JogSpeed
+    ```
+    El sistema devolverá un número entero en la consola que representa el porcentaje de velocidad configurado en ese instante.
+
+---
+
+## 4. Consideraciones Técnicas de Seguridad
+
+* **Inspección Previa:** Es un procedimiento obligatorio verificar visualmente que el indicador de velocidad se encuentre en nivel **Low** antes de iniciar cualquier rutina de movimiento manual o aproximación a utillajes.
+* **Ajuste por Software:** El uso del nivel **High** en movimientos manuales debe restringirse si el manipulador tiene instalada una herramienta de gran volumen o peso, ya que las inercias generadas pueden activar alarmas por sobrecorriente o causar colisiones destructivas debido al tiempo de reacción del operador.
