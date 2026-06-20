@@ -102,7 +102,7 @@ En la sección **Mode** o **Coordinate System**, se debe conmutar el tipo de tra
 
 Una vez seleccionado el modo, se habilitará el panel de botones con direcciones positivas
 
-# Informe Técnico: Control y Configuración de los Niveles de Velocidad en Movimientos Manuales (Jogging) - EPSON T3-401S
+---
 
 ## 1. Clasificación de los Niveles de Velocidad Manual
 
