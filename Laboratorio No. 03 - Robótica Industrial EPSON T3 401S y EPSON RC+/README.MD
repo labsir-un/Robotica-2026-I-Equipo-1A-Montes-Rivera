@@ -376,3 +376,5 @@ La elección entre estas herramientas depende del objetivo del proyecto de ingen
 1. Si la celda se compone exclusivamente de brazos **SCARA o compactos de EPSON** orientados a la electrónica o ensamble rápido, **EPSON RC+ 7.0** es insustituible debido a su comunicación directa y control de periféricos nativos.
 2. Si el proyecto requiere **flexibilidad**, el uso de robots de distintas marcas, o proviene de un flujo de trabajo basado en **diseño CAD/CAM** (fresado, escultura, impresión 3D), **RoboDK** ofrece la plataforma de traducción más versátil del mercado.
 3. Si se está diseñando una línea de producción de **alta complejidad industrial con robots ABB**, donde el error de sincronización de un milisegundo cuesta miles de dólares, **RobotStudio** se posiciona como la única herramienta capaz de garantizar un gemelo digital exacto antes de tocar el suelo de la fábrica.
+
+![Diseño Chupa](https://github.com/labsir-un/Robotica-2026-I-Equipo-1A-Montes-Rivera/blob/main/Laboratorio%20No.%2003%20-%20Rob%C3%B3tica%20Industrial%20EPSON%20T3%20401S%20y%20EPSON%20RC%2B/Dise%C3%B1o_Chupa.jpeg?raw=true)
