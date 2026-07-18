@@ -446,9 +446,17 @@ Se evaluó el resolvedor con 5 casos de prueba cartesianos, logrando los siguien
 
 ### Actividad 14. Trazado de una Figura
 *Trazado físico con marcador o simulación virtual en RViz de una trayectoria geométrica mediante cinemática inversa punto a punto.*
-- **Estado**: Pendiente
-- **Figura seleccionada**: [Triángulo / Cuadrado / Círculo aproximado / Iniciales]
-- **Descripción**: Definición de la trayectoria a partir de puntos cartesianos sucesivos resueltos mediante cinemática inversa.
+- **Estado**: Completado
+- **Figura seleccionada**: Cuadrado, Triángulo, Círculo e Iniciales del Equipo (J e I)
+- **Nodo**: `figure_tracer` (paquete `pincher_control`)
+- **Comando de ejecución**:
+  ```bash
+  ros2 run pincher_control figure_tracer
+  ```
+- **Descripción**: Se implementó una herramienta interactiva en [figure_tracer.py](file:///home/jesus-rivera/ros2_jazzy/phantom_ws/src/pincher_control/pincher_control/figure_tracer.py) que permite al usuario seleccionar y trazar figuras geométricas y las iniciales del equipo ("JI" para Jesús e Isaac). El nodo calcula la trayectoria en coordenadas cartesianas 3D y utiliza la cinemática inversa para comandar las articulaciones.
+  - **Estrategia de interpolación**: Para asegurar líneas rectas continuas en el espacio cartesiano (como en el cuadrado y triángulo), se interpolan 8 puntos intermedios por segmento lineal.
+  - **Control de altura (Pen Up/Down)**: El marcador se desplaza a una altura segura $Z_{\text{up}} = 0.20\text{ m}$ para los tránsitos en el aire y baja a $Z_{\text{down}} = 0.17\text{ m}$ para entrar en contacto con la superficie de trazado.
+  - **Seguridad**: Se utiliza una velocidad reducida del 20% para el trazado activo para garantizar una alta precisión física y simulada.
 - **Enlace al Video**: [Video de Trazado de Figura](https://youtube.com/placeholder_video_trazado)
 
 ### Actividad 15. Reto Final: Coreografía Robótica
@@ -532,6 +540,12 @@ ros2 run pincher_control direct_kinematics
 En una terminal secundaria:
 ```bash
 ros2 run pincher_control inverse_kinematics
+```
+
+### 9. Lanzar el nodo de Trazado de Figuras (Actividad 14)
+En una terminal secundaria:
+```bash
+ros2 run pincher_control figure_tracer
 ```
 
 ---
