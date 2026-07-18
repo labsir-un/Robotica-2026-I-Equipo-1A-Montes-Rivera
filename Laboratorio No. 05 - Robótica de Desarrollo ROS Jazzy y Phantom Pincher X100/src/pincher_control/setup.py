@@ -28,6 +28,7 @@ setup(
             'scan_dynamixel = pincher_control.scan_dynamixel:main',
             'joint_mover = pincher_control.joint_mover:main',
             'trajectory_interpolator = pincher_control.trajectory_interpolator:main',
+            'direct_kinematics = pincher_control.direct_kinematics:main',
         ],
     },
 )

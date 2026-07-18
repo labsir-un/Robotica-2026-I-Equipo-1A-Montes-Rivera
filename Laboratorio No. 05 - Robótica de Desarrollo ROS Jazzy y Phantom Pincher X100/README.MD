@@ -135,18 +135,17 @@ Tabla resumen con los servomotores DYNAMIXEL que conforman el robot:
 | **Pinza** | 5 | Totalmente abierta | Apertura de los dedos | Agarre y sujeción de objetos |
 
 ### Actividad 3. Medición del Robot
-*Dimensiones físicas y geométricas del manipulador obtenidas a partir de los archivos URDF/STL y especificaciones técnicas:*
-- **Altura de la base (Suelo a Eje del Hombro)**: 89.45 mm
-- **Distancia entre ejes consecutivos**:
-  - Eje 1 (Base) a Eje 2 (Hombro): 44.5 mm
-  - Eje 2 (Hombro) a Eje 3 (Codo): 105.8 mm (distancia euclidiana considerando offset `Lm = 31.5` mm y altura `L2 = 101.0` mm)
-  - Eje 3 (Codo) a Eje 4 (Muñeca): 101.0 mm (`L3`)
-- **Longitud de eslabones principales**:
-  - Eslabón 1 (Hombro/Upper arm): 101.0 mm (`L2`) con offset lateral de 31.5 mm (`Lm`)
-  - Eslabón 2 (Codo/Forearm): 101.0 mm (`L3`)
-- **Distancia desde la última articulación (Muñeca) hasta el TCP**: 119.0 mm (`L4`)
-- **Dimensiones principales de la pinza**: Barra de soporte de 75.0 mm de ancho; dedos/fingers de 70.0 mm de longitud.
-
+Dimensiones físicas y geométricas del manipulador obtenidas a partir de los archivos URDF/STL y especificaciones técnicas:
+- *Altura de la base (Suelo a Eje del Hombro)*: 89.45 mm
+- *Distancia entre ejes consecutivos*:
+  - Eje 1 (Base) a Eje 2 (Hombro): 89.45 mm
+  - Eje 2 (Hombro) a Eje 3 (Codo): 105.8 mm (distancia euclidiana considerando offset Lm = 31.5 mm y altura L2 = 101.0 mm)
+  - Eje 3 (Codo) a Eje 4 (Muñeca): 105.8 mm (L3)
+- *Longitud de eslabones principales*:
+  - Eslabón 1 (Hombro/Upper arm): 101.0 mm (L2) con offset lateral de 31.5 mm (Lm)
+  - Eslabón 2 (Codo/Forearm): 101.0 mm (L3)
+- *Distancia desde la última articulación (Muñeca) hasta el TCP*: 119.0 mm (L4)
+- *Dimensiones principales de la pinza*: Barra de soporte de 75.0 mm de ancho; dedos/fingers de 70.0 mm de longitud.
 > [!NOTE]
 > El diagrama geométrico conceptual con dimensiones, ejes de movimiento y sistemas coordenados se encuentra en [doc/diagrama_geometrico.png](doc/diagrama_geometrico.png) (pendiente de generación gráfica).
 
@@ -319,21 +318,56 @@ $$q(t) = q_0 + A \sin(2\pi f t)$$
 ### Actividad 11. Cinemática Directa
 *Obtención de los parámetros Denavit-Hartenberg (D-H) e implementación del modelo en código.*
 
-#### Parámetros D-H del Phantom X Pincher X100:
+- **Estado**: Completado
+- **Nodo**: `direct_kinematics` (paquete `pincher_control`)
+- **Comando de ejecución**:
+  ```bash
+  ros2 run pincher_control direct_kinematics
+  ```
+- **Descripción**: Se implementó el cálculo de la cinemática directa mediante la convención de parámetros de Denavit-Hartenberg (DH) estándar en el script [direct_kinematics.py](file:///home/jesus-rivera/ros2_jazzy/phantom_ws/src/pincher_control/pincher_control/direct_kinematics.py). El programa recibe los valores angulares $q_1, q_2, q_3, q_4$ y calcula la pose cartesianas $x, y, z, \text{roll}, \text{pitch}, \text{yaw}$ en el extremo.
 
-| Eslabón | $\theta_i$ | $d_i$ | $a_i$ | $\alpha_i$ |
-| :---: | :--- | :--- | :--- | :--- |
-| **1** | $q_1$ | $d_1$ | $a_1$ | $\alpha_1$ |
-| **2** | $q_2$ | $d_2$ | $a_2$ | $\alpha_2$ |
-| **3** | $q_3$ | $d_3$ | $a_3$ | $\alpha_3$ |
-| **4** | $q_4$ | $d_4$ | $a_4$ | $\alpha_4$ |
+#### Parámetros Denavit-Hartenberg (DH) Estándar:
 
-- **Estado**: Pendiente
-- **Nodo**: `[Nombre del nodo]`
-- **Entradas**: $q_1, q_2, q_3, q_4$
-- **Salidas**: Pose $(x, y, z, \text{roll}, \text{pitch}, \text{yaw})$
-- **Validación con RViz**:
-  - Comparativa de coordenadas teóricas contra la lectura de transformaciones (`/tf` o `/joint_states` reflejado en RViz) para las 5 configuraciones de la Actividad 7.
+Para el manipulador PhantomX Pincher en su posición de home vertical, se obtuvieron las siguientes dimensiones físicas a partir del modelo URDF:
+- $D_1 = 0.08945\text{ m}$ (Pedestal + waist link)
+- $L_2 = 0.1010\text{ m}$, $L_m = 0.0315\text{ m}$ (Articulación Hombro $\rightarrow$ Codo)
+- $L_3 = 0.1010\text{ m}$ (Articulación Codo $\rightarrow$ Muñeca)
+- $L_4 = 0.1190\text{ m}$ (Longitud de la muñeca al extremo final link4)
+- $\beta = \arctan2(L_m, L_2) \approx 0.3021\text{ rad}$ ($17.31^\circ$)
+- $a_2 = \sqrt{L_m^2 + L_2^2} \approx 0.1058\text{ m}$
+
+| Eslabón $i$ | Articulación | $\theta_i$ | $d_i$ (m) | $a_i$ (m) | $\alpha_i$ (rad) |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **1** | Base ($q_1$) | $q_1$ | $0.08945$ | $0.0$ | $-\pi/2$ |
+| **2** | Hombro ($q_2$) | $q_2 + \beta - \pi/2$ | $0.0$ | $0.1058$ | $0.0$ |
+| **3** | Codo ($q_3$) | $q_3 - \beta$ | $0.0$ | $0.1010$ | $0.0$ |
+| **4** | Muñeca ($q_4$) | $q_4$ | $0.0$ | $0.1190$ | $0.0$ |
+
+*Rotación de herramienta (Tool orientation)*: Al final de la cadena cinemática, se aplica la matriz de transformación fija $T_{tool}$ correspondiente a la rotación del efector final: RPY $=[-\pi/2, 0.0, -\pi/2]$.
+
+#### Resultados de la Comparación (DH vs. URDF/RViz)
+Se evaluó la cinemática directa frente al modelo de referencia URDF en RViz para las 5 configuraciones de la Actividad 7:
+
+1. **Configuración 1**: $q = [0.0^\circ, 0.0^\circ, 0.0^\circ, 0.0^\circ]$
+   * **Calculada (DH)**: $x = 0.03150\text{ m}$, $y = 0.00000\text{ m}$, $z = 0.41045\text{ m}$ | RPY $=[0.00^\circ, 0.00^\circ, -180.00^\circ]$
+   * **Observada (RViz)**: $x = 0.03150\text{ m}$, $y = 0.00000\text{ m}$, $z = 0.41045\text{ m}$ | RPY $=[0.00^\circ, 0.00^\circ, -180.00^\circ]$
+   * **Error 3D**: **$0.000\text{ mm}$**
+2. **Configuración 2**: $q = [25.0^\circ, 25.0^\circ, 20.0^\circ, -20.0^\circ]$
+   * **Calculada (DH)**: $x = 0.17487\text{ m}$, $y = 0.08154\text{ m}$, $z = 0.34694\text{ m}$ | RPY $=[0.00^\circ, -25.00^\circ, -155.00^\circ]$
+   * **Observada (RViz)**: $x = 0.17487\text{ m}$, $y = 0.08154\text{ m}$, $z = 0.34694\text{ m}$ | RPY $=[0.00^\circ, -25.00^\circ, -155.00^\circ]$
+   * **Error 3D**: **$0.000\text{ mm}$**
+3. **Configuración 3**: $q = [-35.0^\circ, 35.0^\circ, -30.0^\circ, 30.0^\circ]$
+   * **Calculada (DH)**: $x = 0.13171\text{ m}$, $y = -0.09223\text{ m}$, $z = 0.35221\text{ m}$ | RPY $=[0.00^\circ, -35.00^\circ, 145.00^\circ]$
+   * **Observada (RViz)**: $x = 0.13171\text{ m}$, $y = -0.09223\text{ m}$, $z = 0.35221\text{ m}$ | RPY $=[0.00^\circ, -35.00^\circ, 145.00^\circ]$
+   * **Error 3D**: **$0.000\text{ mm}$**
+4. **Configuración 4**: $q = [85.0^\circ, -20.0^\circ, 55.0^\circ, 25.0^\circ]$
+   * **Calculada (DH)**: $x = 0.01360\text{ m}$, $y = 0.15545\text{ m}$, $z = 0.33737\text{ m}$ | RPY $=[0.00^\circ, -60.00^\circ, -95.00^\circ]$
+   * **Observada (RViz)**: $x = 0.01360\text{ m}$, $y = 0.15545\text{ m}$, $z = 0.33737\text{ m}$ | RPY $=[0.00^\circ, -60.00^\circ, -95.00^\circ]$
+   * **Error 3D**: **$0.000\text{ mm}$**
+5. **Configuración 5**: $q = [80.0^\circ, -35.0^\circ, 55.0^\circ, -45.0^\circ]$
+   * **Calculada (DH)**: $x = -0.00831\text{ m}$, $y = -0.04715\text{ m}$, $z = 0.39301\text{ m}$ | RPY $=[0.00^\circ, 25.00^\circ, -100.00^\circ]$
+   * **Observada (RViz)**: $x = -0.00831\text{ m}$, $y = -0.04715\text{ m}$, $z = 0.39301\text{ m}$ | RPY $=[0.00^\circ, 25.00^\circ, -100.00^\circ]$
+   * **Error 3D**: **$0.000\text{ mm}$**
 
 ### Actividad 12. Cinemática Inversa
 *Implementación de la cinemática inversa analítica o numérica para la pose cartesianas.*
@@ -426,6 +460,18 @@ ros2 run pincher_control joint_mover
 Si se desea verificar únicamente el modelo en RViz de forma rápida y probar la cinemática visual:
 ```bash
 ros2 launch pincher_description display_gui.launch.py
+```
+
+### 6. Lanzar el nodo de Interpolación de Trayectorias (Actividad 9)
+En una terminal secundaria:
+```bash
+ros2 run pincher_control trajectory_interpolator
+```
+
+### 7. Lanzar el nodo de Cinemática Directa y DH (Actividad 11)
+En una terminal secundaria:
+```bash
+ros2 run pincher_control direct_kinematics
 ```
 
 ---
