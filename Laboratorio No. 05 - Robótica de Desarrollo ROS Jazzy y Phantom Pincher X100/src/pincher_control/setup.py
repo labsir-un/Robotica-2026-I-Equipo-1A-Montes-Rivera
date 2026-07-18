@@ -29,6 +29,8 @@ setup(
             'joint_mover = pincher_control.joint_mover:main',
             'trajectory_interpolator = pincher_control.trajectory_interpolator:main',
             'direct_kinematics = pincher_control.direct_kinematics:main',
+            'inverse_kinematics = pincher_control.inverse_kinematics:main',
+            'teach_playback = pincher_control.teach_playback:main',
         ],
     },
 )

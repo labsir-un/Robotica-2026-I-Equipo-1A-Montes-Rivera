@@ -371,14 +371,68 @@ Se evaluó la cinemática directa frente al modelo de referencia URDF en RViz pa
 
 ### Actividad 12. Cinemática Inversa
 *Implementación de la cinemática inversa analítica o numérica para la pose cartesianas.*
-- **Estado**: Pendiente
-- **Nodo**: `[Nombre del nodo]`
-- **Criterios de Implementación**:
-  - Cálculo de soluciones posibles (codo arriba / codo abajo).
-  - Descarte de soluciones fuera de límites seguros.
-  - Reporte de inalcanzabilidad.
-  - Ejecución de la solución válida más cercana a la configuración actual del robot.
-- **Validación**: Pruebas sobre 5 posiciones cartesianas distintas.
+
+- **Estado**: Completado
+- **Nodo**: `inverse_kinematics` (paquete `pincher_control`)
+- **Comando de ejecución**:
+  ```bash
+  ros2 run pincher_control inverse_kinematics
+  ```
+- **Descripción**: Se ha implementado la cinemática inversa analítica para el manipulador PhantomX Pincher en el nodo [inverse_kinematics.py](file:///home/jesus-rivera/ros2_jazzy/phantom_ws/src/pincher_control/pincher_control/inverse_kinematics.py). El resolvedor calcula todas las soluciones posibles, las identifica geométricamente (codo arriba/abajo), descarta las que exceden límites de seguridad y selecciona la configuración válida más cercana.
+
+#### Formulación de la Cinemática Inversa:
+
+Para una pose cartesiana deseada $(x, y, z)$ y una orientación de pitch $\theta$ (ángulo de inclinación del efector final con respecto al plano horizontal), la cinemática inversa se resuelve de la siguiente forma:
+
+1. **Rotación de la Base ($q_1$)**:
+   $$q_1 = \arctan2(y, x)$$
+2. **Posición del Wrist ($r_w, z_w$)**:
+   Proyectamos en el plano vertical 2D. Definimos $r = \sqrt{x^2 + y^2}$ y $z_{rel} = z - D_1$.
+   La posición del wrist joint se deduce restando el offset del efector final ($L_4 = 0.1190\text{ m}$):
+   $$r_w = r - L_4 \cos\theta$$
+   $$z_w = z_{rel} - L_4 \sin\theta$$
+3. **Resolución de la Estructura 2R (Hombro-Codo)**:
+   Sea $a_2 = 0.1058\text{ m}$ y $a_3 = L_3 = 0.1010\text{ m}$.
+   Definimos el ángulo $\psi$ entre el eslabón 2 y el eslabón 3 usando la ley de cosenos:
+   $$\cos\psi = \frac{r_w^2 + z_w^2 - a_2^2 - a_3^2}{2 a_2 a_3}$$
+   Si $|\cos\psi| > 1$, la pose es **inalcanzable** (fuera del espacio de trabajo).
+   - **Codo Abajo (Elbow Down)**: $\psi_1 = \arccos(\cos\psi) \Rightarrow q_3 = \psi_1 + \beta$
+   - **Codo Arriba (Elbow Up)**: $\psi_2 = -\arccos(\cos\psi) \Rightarrow q_3 = \psi_2 + \beta$
+   
+   Para cada caso, el ángulo del hombro $q_2$ se obtiene como:
+   $$\phi_2 = \arctan2(r_w, z_w) - \arctan2(a_3 \sin\psi, a_2 + a_3 \cos\psi)$$
+   $$q_2 = \phi_2 - \beta$$
+4. **Ángulo de la Muñeca ($q_4$)**:
+   Dado que $q_2 + q_3 + q_4 = \pi/2 - \theta$, la orientación se completa con:
+   $$q_4 = \pi/2 - \theta - q_2 - q_3$$
+
+#### Resultados de las 5 Posiciones de Prueba:
+
+Se evaluó el resolvedor con 5 casos de prueba cartesianos, logrando los siguientes resultados:
+
+1. **Prueba 1: Home Vertical Equivalent**
+   * **Entrada**: $x = 0.032\text{ m}$, $y = 0.000\text{ m}$, $z = 0.410\text{ m}$, Pitch $= 90.0^\circ$
+   * **Solución 1 (Codo Abajo)**: `[0.00°, -16.92°, 34.64°, -17.73°]` -> **VÁLIDA**
+   * **Solución 2 (Codo Arriba)**: `[0.00°, 0.00°, 0.00°, 0.00°]` -> **VÁLIDA**
+   * **Resultado**: Seleccionada la **Solución 2 (Codo Arriba)** por ser la más cercana a la posición actual del robot (distancia $= 0.0$).
+2. **Prueba 2: Extendido hacia adelante (Horizontal)**
+   * **Entrada**: $x = 0.150\text{ m}$, $y = 0.000\text{ m}$, $z = 0.250\text{ m}$, Pitch $= 0.0^\circ$
+   * **Solución 1 (Codo Abajo)**: `[0.00°, -43.12°, 92.84°, 40.28°]` -> **VÁLIDA**
+   * **Solución 2 (Codo Arriba)**: `[0.00°, 30.34°, -58.20°, 117.86°]` -> **INVÁLIDA** (el wrist excede el límite seguro de $93.0^\circ$).
+   * **Resultado**: Seleccionada la **Solución 1 (Codo Abajo)** de forma automática.
+3. **Prueba 3: Lateral Izquierda (Bajo)**
+   * **Entrada**: $x = 0.100\text{ m}$, $y = -0.100\text{ m}$, $z = 0.200\text{ m}$, Pitch $= -20.0^\circ$
+   * **Solución 1 (Codo Abajo)**: `[-45.00°, -46.89°, 100.99°, 55.91°]` -> **VÁLIDA**
+   * **Solución 2 (Codo Arriba)**: `[-45.00°, 34.39°, -66.34°, 141.95°]` -> **INVÁLIDA** (el wrist excede el límite seguro de $93.0^\circ$).
+   * **Resultado**: Seleccionada la **Solución 1 (Codo Abajo)**.
+4. **Prueba 4: Lateral Derecha (Alto, Inclinado)**
+   * **Entrada**: $x = 0.080\text{ m}$, $y = 0.080\text{ m}$, $z = 0.350\text{ m}$, Pitch $= 45.0^\circ$
+   * **Solución 1 (Codo Abajo)**: `[45.00°, -37.40°, 77.70°, 4.71°]` -> **VÁLIDA**
+   * **Solución 2 (Codo Arriba)**: `[45.00°, 21.42°, -43.05°, 66.63°]` -> **VÁLIDA**
+   * **Resultado**: Seleccionada la **Solución 2 (Codo Arriba)** por ser la configuración más cercana a la posición home (distancia $= 8776.7$).
+5. **Prueba 5: Inalcanzable (Fuera del espacio de trabajo)**
+   * **Entrada**: $x = 0.400\text{ m}$, $y = 0.000\text{ m}$, $z = 0.500\text{ m}$, Pitch $= 0.0^\circ$
+   * **Resultado**: Reclamada correctamente como: `[Error] Fuera del espacio de trabajo (Wrist inalcanzable)`.
 
 ### Actividad 13. Enseñanza y Repetición de Poses
 *Desarrollo de un modo de enseñanza que permite almacenar y reproducir una secuencia de poses.*
@@ -472,6 +526,12 @@ ros2 run pincher_control trajectory_interpolator
 En una terminal secundaria:
 ```bash
 ros2 run pincher_control direct_kinematics
+```
+
+### 8. Lanzar el nodo de Cinemática Inversa (Actividad 12)
+En una terminal secundaria:
+```bash
+ros2 run pincher_control inverse_kinematics
 ```
 
 ---

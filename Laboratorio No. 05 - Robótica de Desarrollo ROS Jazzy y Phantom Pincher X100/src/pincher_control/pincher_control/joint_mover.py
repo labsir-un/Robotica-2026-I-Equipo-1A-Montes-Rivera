@@ -513,9 +513,9 @@ def main(args=None) -> None:
             break
         time.sleep(0.1)
 
-    # Configurar velocidad al 30% (30% de 1023 = 307)
-    print("Configurando velocidad de las articulaciones al 30% (valor: 307)...")
-    node.send_speed_command(30)
+    # Configurar velocidad al 60%
+    print("Configurando velocidad de las articulaciones al 60%...")
+    node.send_speed_command(60)
 
     try:
         while True:
