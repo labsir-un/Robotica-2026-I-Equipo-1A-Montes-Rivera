@@ -42,8 +42,7 @@
 - **Hardware**: Robot Phantom X Pincher X100, fuente de alimentación y sistema de comunicación (servomotores DYNAMIXEL).
 - **Herramientas Adicionales**: Calibrador (para mediciones físicas) y soporte para marcador liviano.
 
-> [!IMPORTANT]
-> El laboratorio debe desarrollarse únicamente con ROS 2 Jazzy. No se aceptarán soluciones basadas en ROS Humble.
+
 
 ---
 
@@ -78,8 +77,15 @@ Laboratorio No. 05 - Robótica de Desarrollo ROS Jazzy y Phantom Pincher X100/
 │   └── diagrama_geometrico.png              # Diagrama geométrico y sistemas coordenados (pendiente)
 ├── results/                                 # Gráficas obtenidas durante las pruebas
 │   ├── calibracion/                         # Gráficas de error y calibración de cero (pendientes)
-│   ├── interpolacion/                       # Gráficas de trayectorias interpoladas (lineal/cúbica) (pendientes)
-│   └── sinusoidal/                          # Gráficas de trayectorias sinusoidales (pendientes)
+│   ├── interpolacion/                       # Gráficas de trayectorias interpoladas (lineal/cúbica)
+│   │   ├── comparativa_interpolacion.png    # Comparación de perfiles de velocidad/posición (Base)
+│   │   ├── interpolacion_cubica.png         # Posición y velocidad de todas las juntas (cúbica)
+│   │   └── interpolacion_lineal.png         # Posición y velocidad de todas las juntas (lineal)
+│   └── sinusoidal/                          # Gráficas de trayectorias sinusoidales (Base)
+│       ├── test_1.png                       # Trayectoria sinusoidal con A=30°, f=0.1Hz
+│       ├── test_2.png                       # Trayectoria sinusoidal con A=30°, f=0.25Hz
+│       ├── test_3.png                       # Trayectoria sinusoidal con A=60°, f=0.1Hz
+│       └── test_4.png                       # Trayectoria sinusoidal con A=60°, f=0.25Hz
 ├── videos/                                  # Enlaces o archivos de video demostrativos (pendientes)
 └── src/                                     # Código fuente de los paquetes de ROS 2
     ├── pincher_description/                 # Descripción URDF y mallas del manipulador
@@ -97,7 +103,8 @@ Laboratorio No. 05 - Robótica de Desarrollo ROS Jazzy y Phantom Pincher X100/
     └── pincher_control/                     # Paquete de control e interacción con motores
         ├── config/
         │   ├── ax12a.yaml                   # Configuración del perfil de servomotor AX-12A
-        │   └── xl430.yaml                   # Configuración del perfil de servomotor XL430-W250
+        │   ├── xl430.yaml                   # Configuración del perfil de servomotor XL430-W250
+        │   └── saved_poses.yaml             # Archivo YAML de poses registradas (Actividad 13)
         ├── launch/
         │   └── pincher_system.launch.py     # Lanzador principal (gui + control_servo + rviz)
         ├── pincher_control/                 # Nodos y scripts principales en Python
@@ -106,13 +113,17 @@ Laboratorio No. 05 - Robótica de Desarrollo ROS Jazzy y Phantom Pincher X100/
         │   ├── dynamixel_profiles.py        # Perfiles de registros Dynamixel
         │   ├── joint_mover.py               # Nodo por consola para control articular individual y secuencial
         │   ├── pincher_gui.py               # Interfaz gráfica (Tkinter) para sliders y torque
-        │   └── scan_dynamixel.py            # Utilidad de escaneo de IDs en el bus
+        │   ├── scan_dynamixel.py            # Utilidad de escaneo de IDs en el bus
+        │   ├── trajectory_interpolator.py   # Interpolador de trayectorias lineal/cúbica (Actividad 9)
+        │   ├── direct_kinematics.py         # Nodo de cinemática directa y DH (Actividad 11)
+        │   ├── inverse_kinematics.py        # Nodo resolvedor de cinemática inversa (Actividad 12)
+        │   ├── teach_playback.py            # Nodo interactivo de enseñanza y reproducción (Actividad 13)
+        │   ├── figure_tracer.py             # Nodo para trazado cartesiano de figuras (Actividad 14)
+        │   └── choreography.py              # Nodo para reproducir la coreografía sincronizada (Actividad 15)
         ├── package.xml
         └── setup.py
 ```
 
-> [!WARNING]
-> Recuerde que al estructurar o compilar el espacio de trabajo localmente, las carpetas autogeneradas `build`, `install` o `log` **no** deben ser subidas al repositorio de entrega.
 
 ---
 
@@ -120,8 +131,8 @@ Laboratorio No. 05 - Robótica de Desarrollo ROS Jazzy y Phantom Pincher X100/
 
 ### Actividad 1. Preparación del Robot
 *Detalles sobre la conexión, posicionamiento inicial del manipulador, energización y sincronización entre el modelo virtual en RViz y el robot físico.*
-- **Estado**: Completado
-- **Descripción**: Se configuró y compiló el espacio de trabajo `phantom_ws` bajo ROS 2 Jazzy. Se diseñó el modelo URDF en `robot.xacro` definiendo eslabones y articulaciones del PhantomX Pincher X100, configurando su pose inicial (Home) de manera que se visualice completamente vertical en RViz. Para la visualización e interacción virtual, se crearon los lanzamientos `display.launch.py` (visualización base con mallas STL o cajas) y `display_gui.launch.py` (interfaz interactiva para publicar estados articulares). El sistema físico se conecta mediante interfaz USB-Serial con servomotores DYNAMIXEL (XL430 o AX-12A), sincronizándose en tiempo real mediante el nodo `control_servo` que publica los estados en `/joint_states`.
+
+Se configuró y compiló el espacio de trabajo `phantom_ws` bajo ROS 2 Jazzy. Se diseñó el modelo URDF en `robot.xacro` definiendo eslabones y articulaciones del PhantomX Pincher X100, configurando su pose inicial (Home) de manera que se visualice completamente vertical en RViz. Para la visualización e interacción virtual, se crearon los lanzamientos `display.launch.py` (visualización base con mallas STL o cajas) y `display_gui.launch.py` (interfaz interactiva para publicar estados articulares). El sistema físico se conecta mediante interfaz USB-Serial con servomotores DYNAMIXEL (XL430 o AX-12A), sincronizándose en tiempo real mediante el nodo `control_servo` que publica los estados en `/joint_states`.
 
 ### Actividad 2. Identificación de Motores y Articulaciones
 Tabla resumen con los servomotores DYNAMIXEL que conforman el robot:
@@ -156,7 +167,7 @@ Dimensiones físicas y geométricas del manipulador obtenidas a partir de los ar
   ```bash
   ros2 run pincher_control joint_mover
   ```
-- **Descripción**: El programa inicia configurando automáticamente la velocidad máxima al 30% (valor `307` de `1023`) para asegurar movimientos suaves. Implementa una interfaz de consola interactiva multihilo que no bloquea la recepción de `/joint_states`. Permite realizar:
+- **Descripción**: El programa inicia configurando automáticamente la velocidad máxima al 30% para asegurar movimientos suaves. Implementa una interfaz de consola interactiva multihilo que no bloquea la recepción de `/joint_states`. Permite realizar:
   1. **Control manual individual (opción 1)**: Selección de una junta, visualización de su ángulo actual en grados y envío de la consigna deseada (validando los límites seguros).
   2. **Rutina de movimientos independientes automática (opción 2)**: Mueve cada articulación por 3 posiciones de prueba distintas (ej. Base a 45°, -45° y 90°) esperando 10 segundos en cada una, y retornando a 0.0° antes de pasar a la siguiente junta.
   3. **Rutina de movimientos simultáneos (opción 3 - Actividad 7)**: Mueve las 5 articulaciones al mismo tiempo hacia las 5 configuraciones de prueba secuencialmente, esperando 5 segundos por pose.
@@ -168,8 +179,6 @@ Dimensiones físicas y geométricas del manipulador obtenidas a partir de los ar
 
 - **Fórmula del error**:
   $$e_q = q_{\text{deseado}} - q_{\text{medido}}$$
-
-- **Estado**: Completado
 
 #### 1. Datos Medidos en el Laboratorio (Valores en Grados °)
 | Deseado ($q_{\text{deseado}}$) | Base ($q_{\text{medido}}$) | Hombro ($q_{\text{medido}}$) | Codo ($q_{\text{medido}}$) | Muñeca ($q_{\text{medido}}$) | Pinza ($q_{\text{medido}}$) |
@@ -268,7 +277,6 @@ Ejecución de configuraciones angulares conjuntas de las 5 articulaciones, envia
 ### Actividad 9. Interpolación de Trayectorias
 *Nodo para mover el robot entre dos configuraciones lejanas usando perfiles interpolados:*
 
-- **Estado**: Completado
 - **Nodo**: `trajectory_interpolator` (paquete `pincher_control`)
 - **Comando de ejecución**:
   ```bash
@@ -307,18 +315,38 @@ Ejecución de configuraciones angulares conjuntas de las 5 articulaciones, envia
 ### Actividad 10. Trayectoria Sinusoidal de una Articulación
 *Control dinámico de una articulación siguiendo el perfil:*
 $$q(t) = q_0 + A \sin(2\pi f t)$$
-- **Estado**: Pendiente
-- **Pruebas Realizadas**:
-  - Prueba 1: Amplitud $A_1$, Frecuencia $f_1$ -> Error RMS: `[Valor]`
-  - Prueba 2: Amplitud $A_1$, Frecuencia $f_2$ -> Error RMS: `[Valor]`
-  - Prueba 3: Amplitud $A_2$, Frecuencia $f_1$ -> Error RMS: `[Valor]`
-  - Prueba 4: Amplitud $A_2$, Frecuencia $f_2$ -> Error RMS: `[Valor]`
-- **Gráficas**: Las trayectorias deseadas vs. medidas se encuentran en [results/sinusoidal/](results/sinusoidal/).
+
+- **Nodo**: `joint_mover` (paquete `pincher_control`, Opción 5 - Rutina Sinusoidal)
+- **Comando de ejecución**:
+  ```bash
+  ros2 run pincher_control joint_mover
+  ```
+- **Descripción**: Se implementó una rutina de control dinámico por tiempo en la articulación de la Base (`waist`) siguiendo una consigna sinusoidal. El programa calcula las posiciones deseadas a una frecuencia de 50 Hz, enviando las consignas a los servos y guardando el histórico para generar las gráficas deseadas vs. medidas.
+
+#### Pruebas Realizadas:
+* **Prueba 1 (Amplitud $A_1 = 30^\circ$, Frecuencia $f_1 = 0.1\text{ Hz}$)**:
+  * *Métricas*: Error Máximo: $1.217^\circ$ | RMSE: $0.794^\circ$
+  * *Gráfica*:
+    ![Trayectoria Sinusoidal Prueba 1](results/sinusoidal/test_1.png)
+* **Prueba 2 (Amplitud $A_1 = 30^\circ$, Frecuencia $f_2 = 0.25\text{ Hz}$)**:
+  * *Métricas*: Error Máximo: $2.904^\circ$ | RMSE: $1.968^\circ$
+  * *Gráfica*:
+    ![Trayectoria Sinusoidal Prueba 2](results/sinusoidal/test_2.png)
+* **Prueba 3 (Amplitud $A_2 = 60^\circ$, Frecuencia $f_1 = 0.1\text{ Hz}$)**:
+  * *Métricas*: Error Máximo: $2.371^\circ$ | RMSE: $1.579^\circ$
+  * *Gráfica*:
+    ![Trayectoria Sinusoidal Prueba 3](results/sinusoidal/test_3.png)
+* **Prueba 4 (Amplitud $A_2 = 60^\circ$, Frecuencia $f_2 = 0.25\text{ Hz}$)**:
+  * *Métricas*: Error Máximo: $5.724^\circ$ | RMSE: $3.934^\circ$
+  * *Gráfica*:
+    ![Trayectoria Sinusoidal Prueba 4](results/sinusoidal/test_4.png)
+
+#### Análisis de Seguimiento:
+Se observa que tanto el Error Máximo como el RMSE aumentan proporcionalmente al incrementar la amplitud $A$ y la frecuencia $f$. Esto ocurre debido a la inercia física del brazo manipulador y al retraso dinámico de primer orden en el bus de datos serial. Sin embargo, en todos los casos el robot sigue la trayectoria de manera muy fluida y se mantiene estrictamente dentro de los límites seguros de las juntas.
 
 ### Actividad 11. Cinemática Directa
 *Obtención de los parámetros Denavit-Hartenberg (D-H) e implementación del modelo en código.*
 
-- **Estado**: Completado
 - **Nodo**: `direct_kinematics` (paquete `pincher_control`)
 - **Comando de ejecución**:
   ```bash
@@ -372,7 +400,6 @@ Se evaluó la cinemática directa frente al modelo de referencia URDF en RViz pa
 ### Actividad 12. Cinemática Inversa
 *Implementación de la cinemática inversa analítica o numérica para la pose cartesianas.*
 
-- **Estado**: Completado
 - **Nodo**: `inverse_kinematics` (paquete `pincher_control`)
 - **Comando de ejecución**:
   ```bash
@@ -437,7 +464,6 @@ Se evaluó el resolvedor con 5 casos de prueba cartesianos, logrando los siguien
 ### Actividad 13. Enseñanza y Repetición de Poses
 *Desarrollo de un modo de enseñanza que permite almacenar y reproducir una secuencia de poses.*
 
-- **Estado**: Completado
 - **Nodo**: `teach_playback` (paquete `pincher_control`)
 - **Comando de ejecución**:
   ```bash
@@ -457,7 +483,6 @@ Se evaluó el resolvedor con 5 casos de prueba cartesianos, logrando los siguien
 ### Actividad 14. Trazado de una Figura
 *Trazado físico con marcador o simulación virtual en RViz de una trayectoria geométrica mediante cinemática inversa punto a punto.*
 
-- **Estado**: Completado
 - **Nodo**: `figure_tracer` (paquete `pincher_control`)
 - **Comando de ejecución**:
   ```bash
@@ -490,7 +515,7 @@ Se evaluó el resolvedor con 5 casos de prueba cartesianos, logrando los siguien
 
 ### Actividad 15. Reto Final: Coreografía Robótica
 *Diseño y sincronización de una coreografía fluida para el Phantom Pincher X100.*
-- **Estado**: Completado
+
 - **Obra musical seleccionada**: Dubidubidu (Chipi Chipi Chapa Chapa) de Christell
 - **Duración**: 50 segundos (mínimo 45s requerido)
 - **Nodo**: `choreography` (paquete `pincher_control`)
@@ -545,11 +570,11 @@ Para iniciar el nodo controlador (`control_servo`), la interfaz gráfica interac
 
 - **Modo Simulado (sin hardware conectado)**:
   ```bash
-  ros2 launch pincher_control pincher_system.launch.py use_hardware:=false
+  ros2 launch pincher_control pincher_system.launch.py use_hardware:=false use_meshes:=true
   ```
 - **Modo Real (con el robot PhantomX Pincher conectado)**:
   ```bash
-  ros2 launch pincher_control pincher_system.launch.py use_hardware:=true port:=/dev/ttyUSB0 baudrate:=1000000
+  ros2 launch pincher_control pincher_system.launch.py use_hardware:=true port:=/dev/ttyUSB0 baudrate:=1000000 use_meshes:=true
   ```
 
 ### 4. Lanzar la herramienta de control articular por consola
