@@ -324,7 +324,7 @@ $$q(t) = q_0 + A \sin(2\pi f t)$$
   ```bash
   ros2 run pincher_control direct_kinematics
   ```
-- **Descripción**: Se implementó el cálculo de la cinemática directa mediante la convención de parámetros de Denavit-Hartenberg (DH) estándar en el script [direct_kinematics.py](file:///home/jesus-rivera/ros2_jazzy/phantom_ws/src/pincher_control/pincher_control/direct_kinematics.py). El programa recibe los valores angulares $q_1, q_2, q_3, q_4$ y calcula la pose cartesianas $x, y, z, \text{roll}, \text{pitch}, \text{yaw}$ en el extremo.
+- **Descripción**: Se implementó el cálculo de la cinemática directa mediante la convención de parámetros de Denavit-Hartenberg (DH) estándar en el script [direct_kinematics.py](src/pincher_control/pincher_control/direct_kinematics.py). El programa recibe los valores angulares $q_1, q_2, q_3, q_4$ y calcula la pose cartesianas $x, y, z, \text{roll}, \text{pitch}, \text{yaw}$ en el extremo.
 
 #### Parámetros Denavit-Hartenberg (DH) Estándar:
 
@@ -378,7 +378,7 @@ Se evaluó la cinemática directa frente al modelo de referencia URDF en RViz pa
   ```bash
   ros2 run pincher_control inverse_kinematics
   ```
-- **Descripción**: Se ha implementado la cinemática inversa analítica para el manipulador PhantomX Pincher en el nodo [inverse_kinematics.py](file:///home/jesus-rivera/ros2_jazzy/phantom_ws/src/pincher_control/pincher_control/inverse_kinematics.py). El resolvedor calcula todas las soluciones posibles, las identifica geométricamente (codo arriba/abajo), descarta las que exceden límites de seguridad y selecciona la configuración válida más cercana.
+- **Descripción**: Se ha implementado la cinemática inversa analítica para el manipulador PhantomX Pincher en el nodo [inverse_kinematics.py](src/pincher_control/pincher_control/inverse_kinematics.py). El resolvedor calcula todas las soluciones posibles, las identifica geométricamente (codo arriba/abajo), descarta las que exceden límites de seguridad y selecciona la configuración válida más cercana.
 
 #### Formulación de la Cinemática Inversa:
 
@@ -436,35 +436,75 @@ Se evaluó el resolvedor con 5 casos de prueba cartesianos, logrando los siguien
 
 ### Actividad 13. Enseñanza y Repetición de Poses
 *Desarrollo de un modo de enseñanza que permite almacenar y reproducir una secuencia de poses.*
-- **Estado**: Pendiente
-- **Formato de Archivo**: Archivo de almacenamiento YAML (`poses.yaml`).
-- **Capacidades**:
-  - Almacenar al menos 8 poses con nombres identificadores.
-  - Reproducción secuencial de poses con control de velocidad y tiempo de transición.
-  - Parada de emergencia / detención de la reproducción.
-- **Enlace al Video**: [Video de Enseñanza y Repetición](https://youtube.com/placeholder_video_teaching)
+
+- **Estado**: Completado
+- **Nodo**: `teach_playback` (paquete `pincher_control`)
+- **Comando de ejecución**:
+  ```bash
+  ros2 run pincher_control teach_playback
+  ```
+- **Formato de Archivo**: Archivo de almacenamiento YAML (`saved_poses.yaml`), guardado de manera persistente en `pincher_control/config/saved_poses.yaml`.
+- **Mejoras de Robustez Realizadas**:
+  1. **Detección Dinámica de Articulaciones**: En lugar de forzar una lista estática de nombres de joints, el nodo inspecciona dinámicamente el primer mensaje recibido en `/joint_states`. Esto permite adaptarse automáticamente a manipuladores de 4-DOF, 5-DOF o cualquier configuración sin modificar el código.
+  2. **Carga Automática al Iniciar (Auto-Load)**: Al ejecutar el script, si ya existe el archivo `saved_poses.yaml`, las poses se cargan automáticamente en memoria, eliminando el paso manual de carga.
+  3. **Guardado Automático al Registrar (Auto-Save)**: Cada vez que se registra una nueva pose (Opción 2), el archivo YAML se actualiza de forma automática en disco, asegurando que la información esté siempre sincronizada y persista.
+  4. **Interpolación Adaptable**: El ciclo de interpolación cúbica (que garantiza transiciones suaves entre poses) se ajusta dinámicamente al tamaño actual de las articulaciones de la pose, previniendo errores de índices al mezclar configuraciones históricas.
+  5. **Deshabilitación/Habilitación de Torque**: Permite apagar el torque (Opción 1) para posicionar manualmente el brazo físico (guiado manual) y volver a habilitarlo al iniciar la reproducción (Opción 5).
+  6. **Control de Tiempo de Transición**: Permite modificar en tiempo de ejecución los segundos de transición entre poses (Opción 7), aplicando interpolación cúbica suave para el trayecto.
+  7. **Detención Activa**: Permite detener la reproducción de forma de emergencia o normal de manera segura en cualquier momento (Opción 6) cancelando el hilo de ejecución en segundo plano.
+- **Enlace al Video**: [Video de Enseñanza y Repetición](https://youtube.com/placeholder_video_teaching) (pendiente de grabación)
 
 ### Actividad 14. Trazado de una Figura
 *Trazado físico con marcador o simulación virtual en RViz de una trayectoria geométrica mediante cinemática inversa punto a punto.*
+
 - **Estado**: Completado
-- **Figura seleccionada**: Cuadrado, Triángulo, Círculo e Iniciales del Equipo (J e I)
 - **Nodo**: `figure_tracer` (paquete `pincher_control`)
 - **Comando de ejecución**:
   ```bash
   ros2 run pincher_control figure_tracer
   ```
-- **Descripción**: Se implementó una herramienta interactiva en [figure_tracer.py](file:///home/jesus-rivera/ros2_jazzy/phantom_ws/src/pincher_control/pincher_control/figure_tracer.py) que permite al usuario seleccionar y trazar figuras geométricas y las iniciales del equipo ("JI" para Jesús e Isaac). El nodo calcula la trayectoria en coordenadas cartesianas 3D y utiliza la cinemática inversa para comandar las articulaciones.
-  - **Estrategia de interpolación**: Para asegurar líneas rectas continuas en el espacio cartesiano (como en el cuadrado y triángulo), se interpolan 8 puntos intermedios por segmento lineal.
-  - **Control de altura (Pen Up/Down)**: El marcador se desplaza a una altura segura $Z_{\text{up}} = 0.20\text{ m}$ para los tránsitos en el aire y baja a $Z_{\text{down}} = 0.17\text{ m}$ para entrar en contacto con la superficie de trazado.
-  - **Seguridad**: Se utiliza una velocidad reducida del 20% para el trazado activo para garantizar una alta precisión física y simulada.
-- **Enlace al Video**: [Video de Trazado de Figura](https://youtube.com/placeholder_video_trazado)
+- **Descripción**: Se implementó una herramienta interactiva en [figure_tracer.py](src/pincher_control/pincher_control/figure_tracer.py) que permite comandar al robot para trazar de forma continua en coordenadas cartesianas 3D tres figuras geométricas y las iniciales del equipo ("JI" por Jesús e Isaac). El nodo calcula las trayectorias cartesianas y aplica el resolvedor analítico de cinemática inversa en tiempo real para enviar las consignas angulares al robot.
+
+#### Parámetros del Plano de Trazado:
+* **Inclinación de la Muñeca (Pitch $\theta$)**: Se configuró un ángulo fijo de $-30.0^\circ$ para garantizar que el marcador mantenga un ángulo de ataque adecuado y estable sobre la mesa de dibujo.
+* **Altura Segura (Pen Up - $Z_{\text{up}}$)**: $0.20\text{ m}$ para desplazamientos rápidos en el aire entre trazos o aproximaciones iniciales.
+* **Altura de Contacto (Pen Down - $Z_{\text{down}}$)**: $0.17\text{ m}$ de altura constante con respecto a la base del robot para entrar en contacto con la superficie.
+* **Control de Velocidad Dinámico**: El nodo conmuta la velocidad máxima de los motores automáticamente: $30\%$ (`SPEED_MOVE`) para tránsitos seguros con marcador levantado y $20\%$ (`SPEED_DRAW`) para el trazado activo para evitar sobre-elongación o sacudidas debido a las inercias.
+
+#### Trayectorias de las Figuras Implementadas:
+1. **Cuadrado**:
+   * *Dimensiones*: Lado de $0.06\text{ m}$ centrado en $(X=0.14\text{ m}, Y=0.0\text{ m})$.
+   * *Trayectoria*: Segmento cerrado interpolando 8 puntos intermedios en línea recta por cada uno de los 4 lados para asegurar que las aristas sean ortogonales y rectas en el plano cartesiano.
+2. **Triángulo**:
+   * *Dimensiones*: Lado de $0.06\text{ m}$ centrado en $(X=0.14\text{ m}, Y=0.0\text{ m})$.
+   * *Trayectoria*: Segmento cerrado que conecta 3 vértices, interpolando 8 puntos en línea recta por arista.
+3. **Círculo**:
+   * *Dimensiones*: Radio de $0.03\text{ m}$ centrado en $(X=0.14\text{ m}, Y=0.0\text{ m})$.
+   * *Trayectoria*: Segmento curvado aproximado mediante la discretización de 36 puntos de paso calculados con funciones trigonométricas ($x = x_c + R\cos\phi, y = y_c + R\sin\phi$).
+4. **Iniciales del Equipo ("JI")**:
+   * Se ejecuta mediante una secuencia de 5 trazos discretos (con levantamiento automático del marcador entre ellos):
+     * *Letra J (2 trazos)*: Barra horizontal superior a $X=0.17\text{ m}$, seguido del vástago vertical en $Y=-0.025\text{ m}$ que se curva en la parte inferior para formar el gancho de la letra.
+     * *Letra I (3 trazos)*: Barra horizontal superior a $X=0.17\text{ m}$, vástago vertical centrado a $Y=0.025\text{ m}$, y barra horizontal inferior a $X=0.11\text{ m}$.
+
+- **Enlace al Video**: [Video de Trazado de Figura](https://youtube.com/placeholder_video_trazado) (pendiente de grabación)
 
 ### Actividad 15. Reto Final: Coreografía Robótica
 *Diseño y sincronización de una coreografía fluida para el Phantom Pincher X100.*
-- **Estado**: Pendiente
-- **Obra musical seleccionada**: [Opción 1: youtube.com/watch?v=a-utnfedCDE / Opción 2: youtube.com/watch?v=OCZIzzQpJUw]
-- **Duración**: `[Duración de la coreografía, mín. 45s]`
-- **Características**: Ejecución de movimientos fluidos sincronizados con la melodía, involucrando todas las articulaciones en ciclo cerrado y sin intervención manual.
+- **Estado**: Completado
+- **Obra musical seleccionada**: Dubidubidu (Chipi Chipi Chapa Chapa) de Christell
+- **Duración**: 50 segundos (mínimo 45s requerido)
+- **Nodo**: `choreography` (paquete `pincher_control`)
+- **Comando de ejecución**:
+  ```bash
+  ros2 run pincher_control choreography
+  ```
+- **Características**:
+  - **Intro (0.0s a 5.0s)**: Transición suave de Home a la pose de inicio mediante interpolación cúbica suave.
+  - **Verso 1 (5.0s a 15.0s)**: Danza de movimientos lentos y sinusoidales de baja frecuencia en todas las articulaciones.
+  - **Estribillo 1 (15.0s a 25.0s)**: Movimientos de alta frecuencia y batido rápido de pinza al ritmo del estribillo principal ("Chipi Chipi", "Dubi Dubi", "Mágico", y "Boom Boom!").
+  - **Verso 2 (25.0s a 35.0s)**: Patrones de movimiento circulares con control espacial continuo.
+  - **Estribillo 2 y Final (35.0s a 45.0s)**: Aumento de la energía y amplitud articular que culmina con una venia de agradecimiento.
+  - **Outro (45.0s a 50.0s)**: Retorno controlado a la posición de Home vertical.
 - **Enlace al Video Completo**: [Video de la Coreografía](https://youtube.com/placeholder_video_coreografia)
 
 ---
@@ -546,6 +586,18 @@ ros2 run pincher_control inverse_kinematics
 En una terminal secundaria:
 ```bash
 ros2 run pincher_control figure_tracer
+```
+
+### 10. Lanzar el nodo de Enseñanza y Repetición (Actividad 13)
+En una terminal secundaria:
+```bash
+ros2 run pincher_control teach_playback
+```
+
+### 11. Lanzar el nodo de la Coreografía (Actividad 15)
+En una terminal secundaria:
+```bash
+ros2 run pincher_control choreography
 ```
 
 ---

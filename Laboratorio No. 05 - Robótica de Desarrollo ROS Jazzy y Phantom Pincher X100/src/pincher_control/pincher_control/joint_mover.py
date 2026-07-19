@@ -21,6 +21,16 @@ JOINT_LIMITS_DEG = {
     'gripper': (-110.0, 110.0),
 }
 
+def get_workspace_dir() -> str:
+    prefix = os.environ.get('COLCON_PREFIX_PATH', '')
+    if not prefix:
+        prefix = os.environ.get('AMENT_PREFIX_PATH', '')
+    if prefix:
+        first_prefix = prefix.split(os.pathsep)[0]
+        return os.path.abspath(os.path.join(first_prefix, '..'))
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
+
 JOINT_TRANSLATIONS = {
     'waist': 'Base (waist)',
     'shoulder': 'Hombro (shoulder)',
@@ -240,8 +250,9 @@ def run_sequential_test(node: JointMoverNode) -> None:
 
 def save_interpolation_plots(time_steps: List[float], positions_data: Dict[str, List[float]], 
                              velocities_data: Dict[str, List[float]], method_name: str, filename: str) -> None:
-    os.makedirs('/home/jesus-rivera/ros2_jazzy/phantom_ws/results/interpolacion', exist_ok=True)
-    filepath = os.path.join('/home/jesus-rivera/ros2_jazzy/phantom_ws/results/interpolacion', filename)
+    results_dir = os.path.join(get_workspace_dir(), 'results', 'interpolacion')
+    os.makedirs(results_dir, exist_ok=True)
+    filepath = os.path.join(results_dir, filename)
     
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
     
@@ -267,8 +278,9 @@ def save_interpolation_plots(time_steps: List[float], positions_data: Dict[str, 
     print(f"[Graficado] Gráfica guardada en: {filepath}")
 
 def generate_comparison_plot() -> None:
-    os.makedirs('/home/jesus-rivera/ros2_jazzy/phantom_ws/results/interpolacion', exist_ok=True)
-    filepath = '/home/jesus-rivera/ros2_jazzy/phantom_ws/results/interpolacion/comparativa_interpolacion.png'
+    results_dir = os.path.join(get_workspace_dir(), 'results', 'interpolacion')
+    os.makedirs(results_dir, exist_ok=True)
+    filepath = os.path.join(results_dir, 'comparativa_interpolacion.png')
     
     T = 5.0
     time_steps = np.linspace(0, T, 200)
@@ -396,8 +408,9 @@ def run_interpolation_test(node: JointMoverNode) -> None:
 
 def save_sinusoidal_plot(time_steps: List[float], desired: List[float], measured: List[float], 
                           max_err: float, rmse: float, test_num: int, A: float, f: float) -> None:
-    os.makedirs('/home/jesus-rivera/ros2_jazzy/phantom_ws/results/sinusoidal', exist_ok=True)
-    filepath = f'/home/jesus-rivera/ros2_jazzy/phantom_ws/results/sinusoidal/test_{test_num}.png'
+    results_dir = os.path.join(get_workspace_dir(), 'results', 'sinusoidal')
+    os.makedirs(results_dir, exist_ok=True)
+    filepath = os.path.join(results_dir, f'test_{test_num}.png')
     
     plt.figure(figsize=(10, 6))
     plt.plot(time_steps, desired, 'r--', label='Deseada', linewidth=2)
@@ -513,9 +526,9 @@ def main(args=None) -> None:
             break
         time.sleep(0.1)
 
-    # Configurar velocidad al 60%
-    print("Configurando velocidad de las articulaciones al 60%...")
-    node.send_speed_command(60)
+    # Configurar velocidad al 30% por seguridad
+    print("Configurando velocidad de las articulaciones al 30%...")
+    node.send_speed_command(30)
 
     try:
         while True:

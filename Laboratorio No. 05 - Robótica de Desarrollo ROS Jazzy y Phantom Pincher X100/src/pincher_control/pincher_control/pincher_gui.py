@@ -16,11 +16,11 @@ from std_srvs.srv import SetBool, Trigger
 
 
 JOINT_LIMITS_DEG = {
-    'waist': (-140.0, 139.0),
-    'shoulder': (-106.0, 64.0),
-    'elbow': (-131.0, 137.0),
-    'wrist': (-93.0, 93.0),
-    'gripper': (-110.0, 110.0),
+    'waist': (-150.0, 150.0),
+    'shoulder': (-150.0, 150.0),
+    'elbow': (-150.0, 150.0),
+    'wrist': (-150.0, 150.0),
+    'gripper': (-90.0, 90.0),
 }
 
 

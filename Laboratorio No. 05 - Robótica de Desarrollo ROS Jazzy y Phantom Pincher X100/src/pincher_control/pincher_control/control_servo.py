@@ -376,7 +376,6 @@ class PincherController(Node):
         self._publish_status(
             f'Velocidad actualizada a {requested} en {successes}/{len(self.dxl_ids)} motores.'
         )
-
     def _move_home(self) -> bool:
         if self.software_stop_active or not self.torque_enabled:
             return False

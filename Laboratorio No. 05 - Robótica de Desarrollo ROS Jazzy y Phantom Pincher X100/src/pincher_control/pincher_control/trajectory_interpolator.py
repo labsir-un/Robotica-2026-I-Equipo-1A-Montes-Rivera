@@ -22,6 +22,16 @@ JOINT_LIMITS_DEG = {
     'gripper': (-110.0, 110.0),
 }
 
+def get_workspace_dir() -> str:
+    prefix = os.environ.get('COLCON_PREFIX_PATH', '')
+    if not prefix:
+        prefix = os.environ.get('AMENT_PREFIX_PATH', '')
+    if prefix:
+        first_prefix = prefix.split(os.pathsep)[0]
+        return os.path.abspath(os.path.join(first_prefix, '..'))
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
+
 JOINT_TRANSLATIONS = {
     'waist': 'Base (waist)',
     'shoulder': 'Hombro (shoulder)',
@@ -62,8 +72,9 @@ def spin_thread_target(node: Node) -> None:
 def save_plots(time_steps: List[float], positions_data: Dict[str, List[float]], 
                velocities_data: Dict[str, List[float]], method_name: str, filename: str) -> None:
     """Generates and saves position and velocity plots using Matplotlib."""
-    os.makedirs('/home/jesus-rivera/ros2_jazzy/phantom_ws/results/interpolacion', exist_ok=True)
-    filepath = os.path.join('/home/jesus-rivera/ros2_jazzy/phantom_ws/results/interpolacion', filename)
+    results_dir = os.path.join(get_workspace_dir(), 'results', 'interpolacion')
+    os.makedirs(results_dir, exist_ok=True)
+    filepath = os.path.join(results_dir, filename)
     
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
     
@@ -188,8 +199,9 @@ def run_cubic_interpolation(node: TrajectoryInterpolatorNode, duration: float = 
 
 def generate_comparison_plot() -> None:
     """Generates a comparison overlay plot of the first joint (Base) to highlight the difference in smoothness."""
-    os.makedirs('/home/jesus-rivera/ros2_jazzy/phantom_ws/results/interpolacion', exist_ok=True)
-    filepath = '/home/jesus-rivera/ros2_jazzy/phantom_ws/results/interpolacion/comparativa_interpolacion.png'
+    results_dir = os.path.join(get_workspace_dir(), 'results', 'interpolacion')
+    os.makedirs(results_dir, exist_ok=True)
+    filepath = os.path.join(results_dir, 'comparativa_interpolacion.png')
     
     T = 5.0
     time_steps = np.linspace(0, T, 200)
@@ -252,8 +264,8 @@ def main(args=None) -> None:
     spin_thread.start()
 
     # Set moving speed to 30% on start for safety
-    print("Configurando velocidad inicial del bus al 30% (valor: 307)...")
-    node.set_speed(307)
+    print("Configurando velocidad inicial del bus al 30%...")
+    node.set_speed(30)
     time.sleep(0.5)
 
     try:

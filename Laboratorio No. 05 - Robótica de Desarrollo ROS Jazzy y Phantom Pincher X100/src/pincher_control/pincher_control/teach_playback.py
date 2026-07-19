@@ -14,7 +14,17 @@ from std_msgs.msg import UInt32
 from std_srvs.srv import SetBool
 
 # YAML File path
-YAML_DIR = '/home/jesus-rivera/ros2_jazzy/phantom_ws/src/pincher_control/config'
+def get_workspace_dir() -> str:
+    prefix = os.environ.get('COLCON_PREFIX_PATH', '')
+    if not prefix:
+        prefix = os.environ.get('AMENT_PREFIX_PATH', '')
+    if prefix:
+        first_prefix = prefix.split(os.pathsep)[0]
+        return os.path.abspath(os.path.join(first_prefix, '..'))
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
+
+YAML_DIR = os.path.join(get_workspace_dir(), 'src', 'pincher_control', 'config')
 YAML_PATH = os.path.join(YAML_DIR, 'saved_poses.yaml')
 
 JOINT_NAMES = ['waist', 'shoulder', 'elbow', 'wrist', 'gripper']
@@ -109,7 +119,7 @@ def play_poses_worker(node: TeachPlaybackNode) -> None:
         return
 
     # Set transition speed to 30% for safety
-    node.set_speed(307)
+    node.set_speed(30)
     time.sleep(0.5)
 
     freq = 50.0

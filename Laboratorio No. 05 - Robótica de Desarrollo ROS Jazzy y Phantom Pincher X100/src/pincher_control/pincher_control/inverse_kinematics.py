@@ -199,8 +199,8 @@ def main(args=None) -> None:
     spin_thread.start()
 
     # Set speed to 30% for safety
-    print("Configurando velocidad inicial del bus al 30% (valor: 307)...")
-    node.set_speed(307)
+    print("Configurando velocidad inicial del bus al 30%...")
+    node.set_speed(30)
     time.sleep(0.5)
 
     # 5 test Cartesian positions

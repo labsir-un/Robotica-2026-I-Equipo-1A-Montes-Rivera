@@ -33,8 +33,8 @@ JOINT_LIMITS_DEG = {
 Z_UP = 0.20      # Pen lifted height (meters)
 Z_DOWN = 0.17    # Pen drawing height (meters)
 PITCH = -30.0    # Fixed wrist pitch angle (degrees)
-SPEED_DRAW = 200 # Drawing speed (approx 20% of 1023)
-SPEED_MOVE = 307 # Moving/safe speed (approx 30% of 1023)
+SPEED_DRAW = 20 # Drawing speed (20%)
+SPEED_MOVE = 30 # Moving/safe speed (30%)
 
 class FigureTracerNode(Node):
     """ROS 2 Node that handles tracing figures in Cartesian space using Inverse Kinematics."""

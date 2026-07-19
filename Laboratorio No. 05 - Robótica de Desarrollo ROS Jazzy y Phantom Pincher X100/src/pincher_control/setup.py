@@ -32,6 +32,7 @@ setup(
             'inverse_kinematics = pincher_control.inverse_kinematics:main',
             'teach_playback = pincher_control.teach_playback:main',
             'figure_tracer = pincher_control.figure_tracer:main',
+            'choreography = pincher_control.choreography:main',
         ],
     },
 )
