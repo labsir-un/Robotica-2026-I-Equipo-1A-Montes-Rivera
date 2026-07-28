@@ -51,7 +51,7 @@ rm -rf build/ install/ log/   # Limpieza recomendada si hay errores con setuptoo
 colcon build --packages-select pincher_control
 ```
 
-## ⚙️ Calibración Espacial (Píxeles a Centímetros)
+##  Calibración Espacial (Píxeles a Centímetros)
 
 El código asume una cámara fija. Para que la cinemática inversa funcione correctamente, debes configurar los parámetros de calibración dentro de `vision_node.py` en base a tu entorno físico:
 
