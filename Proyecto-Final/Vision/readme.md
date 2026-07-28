@@ -2,7 +2,7 @@
 
 Este módulo es parte del paquete de control de un brazo robótico PhantomX Pincher en ROS 2 (Jazzy). Implementa un nodo de visión artificial que utiliza un modelo entrenado de YOLO (Ultralytics) para detectar piezas geométricas, calcular su centro en píxeles y realizar una transformación espacial para publicar sus coordenadas (X, Y) en centímetros relativas a la base del robot.
 
-## 🚀 Características Principales
+##  Características Principales
 
 - **Inferencia en Tiempo Real:** Detección de objetos usando un modelo personalizado (`best.pt`) de YOLO.
 - **Transformación Espacial 2D:** Convierte el centro del bounding box (píxeles) a coordenadas del mundo real (centímetros).
@@ -13,7 +13,7 @@ Este módulo es parte del paquete de control de un brazo robótico PhantomX Pinc
   - `/vision/coordenada_pieza` (`geometry_msgs/Point`): Coordenadas para la cinemática inversa.
   - `/vision/imagen_procesada` (`sensor_msgs/Image`): Video en vivo con las detecciones dibujadas.
 
-## 🛠️ Requisitos e Instalación
+##  Requisitos e Instalación
 
 Para evitar conflictos con las dependencias del sistema en Ubuntu (PEP 668), se recomienda usar un entorno virtual para las dependencias de IA.
 
@@ -65,7 +65,7 @@ self.CM_POR_PIXEL_X = 0.05
 self.CM_POR_PIXEL_Y = 0.05
 ```
 
-## 🏃‍♂️ Ejecución
+##  Ejecución
 
 Para iniciar el nodo, debes activar tanto el entorno de ROS 2 como el entorno virtual de Python:
 
