@@ -9,7 +9,7 @@
 
 <h1>PhantomX Pincher X100 con ROS 2 Jazzy</h1>
 
-<h2>Laboratorio No. 05 - Cinemática - Pincher Phantom X100</h2>
+<h2>Proyecto Final</h2>
 
 <h4>Jesus Alberto Rivera Molina - jriveramo@unal.edu.co<br>
     Isaac Montes Luna - imontesl@unal.edu.co</h4>
