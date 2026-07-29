@@ -70,6 +70,94 @@ Este script define el nodo `GoToTrayOriginNode`, el cual es un nodo de prueba di
 
 Este módulo es parte del paquete de control de un brazo robótico PhantomX Pincher en ROS 2 (Jazzy). Implementa un nodo de visión artificial que utiliza un modelo entrenado de YOLO (Ultralytics) para detectar piezas geométricas, calcular su centro en píxeles y realizar una transformación espacial para publicar sus coordenadas (X, Y) en centímetros relativas a la base del robot.
 
+
+# Creación de un Dataset para Entrenamiento con Roboflow
+
+## 1. Creación del proyecto y carga de datos
+
+El primer paso consiste en crear un nuevo proyecto en **Roboflow** seleccionando el tipo **Object Detection**. En esta etapa se definen las clases u objetos que el modelo deberá reconocer, por ejemplo:
+
+- Cubo
+- Cilindro
+- Esfera
+
+Posteriormente, se cargan las imágenes o videos capturados con la cámara del robot. Si se utiliza un video, Roboflow extrae automáticamente fotogramas a intervalos regulares para convertirlos en imágenes aptas para el entrenamiento.
+
+---
+
+## 2. Etiquetado de objetos (*Bounding Boxes*)
+
+Una vez cargadas las imágenes, se procede al etiquetado manual mediante el editor de Roboflow.
+
+Para cada objeto visible se dibuja una **caja delimitadora (Bounding Box)** que se ajusta lo mejor posible a sus contornos y se asigna la clase correspondiente.
+
+Roboflow incorpora herramientas como **Label Assist**, que, después de etiquetar algunas imágenes, es capaz de predecir automáticamente la ubicación de los objetos en las imágenes restantes, reduciendo significativamente el tiempo de etiquetado.
+
+---
+
+## 3. Preprocesamiento y aumento de datos (*Data Augmentation*)
+
+Esta etapa mejora la capacidad del modelo para generalizar y reconocer objetos en diferentes condiciones.
+
+### Preprocesamiento
+
+Se realizan automáticamente tareas como:
+
+- Redimensionar todas las imágenes a un tamaño uniforme (generalmente **640 × 640 píxeles** para YOLO).
+- Corregir la orientación de las imágenes cuando sea necesario.
+
+### Aumento de datos
+
+Roboflow genera nuevas versiones de las imágenes originales aplicando distintas transformaciones, entre ellas:
+
+- Ajustes de brillo.
+- Rotaciones.
+- Adición de ruido.
+
+Estas modificaciones permiten simular diferentes condiciones de iluminación, orientación de los objetos y calidad de la cámara, aumentando la robustez del modelo. Por ejemplo, un conjunto de **100 imágenes originales** puede ampliarse hasta aproximadamente **300 imágenes** para entrenamiento.
+
+---
+
+## 4. Generación y división del conjunto de datos
+
+Una vez procesadas las imágenes, Roboflow organiza automáticamente el dataset y lo divide en tres subconjuntos:
+
+| Conjunto | Porcentaje | Función |
+|----------|-----------:|---------|
+| **Train** | ~70 % | Utilizado para entrenar el modelo. |
+| **Valid** | ~20 % | Empleado para evaluar el rendimiento durante el entrenamiento y ajustar parámetros. |
+| **Test** | ~10 % | Reservado para medir el desempeño final del modelo con imágenes nunca vistas. |
+
+Esta separación evita el sobreajuste y permite obtener una evaluación objetiva del detector.
+
+---
+
+## 5. Exportación en formato YOLOv8
+
+Finalmente, se genera una versión del dataset y se selecciona la opción **Export**.
+
+Roboflow organiza automáticamente todos los archivos con la estructura requerida por **Ultralytics YOLOv8**, entregando un archivo comprimido (`.zip`) que contiene:
+
+```text
+dataset/
+├── images/
+│   ├── train/
+│   ├── valid/
+│   └── test/
+├── labels/
+│   ├── train/
+│   ├── valid/
+│   └── test/
+└── data.yaml
+```
+
+Donde:
+
+- **images/** contiene las imágenes del conjunto de datos.
+- **labels/** almacena los archivos `.txt` con las coordenadas de las cajas delimitadoras y las clases correspondientes.
+- **data.yaml** especifica la ubicación del dataset y las clases que utilizará YOLOv8 durante el entrenamiento.
+
+
 ##  Características Principales
 
 - **Inferencia en Tiempo Real:** Detección de objetos usando un modelo personalizado (`best.pt`) de YOLO.
