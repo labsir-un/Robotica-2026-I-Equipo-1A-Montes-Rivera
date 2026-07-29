@@ -249,9 +249,15 @@ stateDiagram-v2
 ---
 
 ## 7. Diagramas y Planos
-- **Diagrama de la Máquina de Estados**: Disponible en [doc/diagrama_de_flujo.png](doc/diagrama_de_flujo.png).
-- **Plano de Planta y Distribución de la Celda**: Disponible en [doc/plano_de_planta.png](doc/plano_de_planta.png).
-- **Arquitectura de Nodos y Tópicos ROS 2**: Disponible en [doc/arquitectura_ros2.png](doc/arquitectura_ros2.png).
+
+### 7.1 Diagrama de Flujo del Proceso Global Pick & Place
+![Diagrama de Flujo del Proceso Global](doc/diagrama_de_flujo.png)
+
+### 7.2 Arquitectura de Nodos, Tópicos y Hardware ROS 2
+![Arquitectura ROS 2](doc/arquitectura_ros2.png)
+
+### 7.3 Plano de Planta y Disposición de la Celda (Vista Cenital 2D)
+![Plano de Planta de la Celda](doc/plano_de_planta.png)
 
 ---
 
@@ -265,6 +271,17 @@ stateDiagram-v2
   1. El filtro espacial de área circular ($r \le 140\text{ px}$) implementado en el nodo de visión resolvió los falsos positivos generados por reflejos o elementos fuera del área de trabajo, garantizando que el robot únicamente atienda piezas colocadas sobre la bandeja blanca central.
   2. La configuración del servicio de arranque automático `systemd` (`phantom_sorting.service`) en la Raspberry Pi 5 permitió transformar la celda en un producto industrial 100% autónomo y "plug and play", listo para operar de forma independiente al energizar el sistema.
 
+- **Conclusiones de Janan Libardo Carreño Riaño**:
+  1. El diseño modular del proyecto basado en ROS 2 permitió integrar de manera eficiente los subsistemas de visión artificial, control del manipulador, interfaz HMI y planificación de movimientos, facilitando tanto las pruebas individuales como el mantenimiento del sistema completo.
+  2. La utilización de paquetes independientes y lanzadores específicos contribuyó a mejorar la escalabilidad del proyecto, permitiendo incorporar nuevas herramientas y funcionalidades sin afectar la operación general de la celda robótica.
+
+- **Conclusiones de Jose Andres Zapata Piñeros**:
+  1. La implementación de las transformaciones entre las coordenadas obtenidas por el sistema de visión y el espacio cartesiano del robot fue fundamental para garantizar la precisión en las tareas de Pick & Place, demostrando la importancia de la calibración en sistemas robóticos integrados.
+  2. El desarrollo del resolvedor de cinemática inversa adaptado al efector final de vacío permitió realizar movimientos seguros y precisos durante las etapas de aproximación, agarre y depósito de las piezas clasificadas.
+
+- **Conclusiones de Cristian Hoyos**:
+  1. La integración del hardware empleado en el proyecto, incluyendo el manipulador Phantom X Pincher X100, la cámara USB, la Raspberry Pi 5 y el sistema neumático de vacío, evidenció la viabilidad de construir una celda automatizada funcional utilizando tecnologías abiertas y de bajo costo.
+  2. Los resultados experimentales obtenidos en precisión de clasificación, repetibilidad posicional y tiempo de ciclo permitieron validar el correcto desempeño del sistema desarrollado, demostrando su capacidad para ejecutar procesos automatizados de clasificación de objetos de manera estable y confiable.
 ---
 
 ## 9. Instrucciones de Uso y Ejecución
