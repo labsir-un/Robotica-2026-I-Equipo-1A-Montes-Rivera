@@ -42,8 +42,8 @@ Este módulo es parte del paquete de control de un brazo robótico PhantomX Pinc
 - **Inferencia en Tiempo Real:** Detección de objetos usando un modelo personalizado (`best.pt`) de YOLO.
 - **Transformación Espacial 2D:** Convierte el centro del bounding box (píxeles) a coordenadas del mundo real (centímetros).
 - **Cumplimiento del Estándar REP 103:** El sistema de coordenadas está referenciado al `base_link` del robot:
-  - **+X:** Hacia adelante del robot.
-  - **+Y:** Hacia la izquierda del robot.
+  - **+X:** Hacia derecha del robot.
+  - **+Y:** Hacia adelante del robot.
 - **Publicación de Tópicos ROS 2:**
   - `/vision/coordenada_pieza` (`geometry_msgs/Point`): Coordenadas para la cinemática inversa.
   - `/vision/imagen_procesada` (`sensor_msgs/Image`): Video en vivo con las detecciones dibujadas.
