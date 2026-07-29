@@ -1,3 +1,28 @@
+<div align="center">
+<picture>
+    <source srcset="https://imgur.com/5bYAzsb.png" media="(prefers-color-scheme: dark)">
+    <source srcset="https://imgur.com/Os03JoE.png" media="(prefers-color-scheme: light)">
+    <img src="https://imgur.com/Os03JoE.png" alt="Escudo UNAL" width="350px">
+</picture>
+
+<h3>Curso de Robótica 2026-I</h3>
+
+<h1>PhantomX Pincher X100 con ROS 2 Jazzy</h1>
+
+<h2>Laboratorio No. 05 - Cinemática - Pincher Phantom X100</h2>
+
+<h4>Jesus Alberto Rivera Molina - jriveramo@unal.edu.co<br>
+    Isaac Montes Luna - imontesl@unal.edu.co</h4>
+
+<p>
+  <img alt="Ubuntu 24.04 LTS" src="https://img.shields.io/badge/Ubuntu-24.04%20LTS-E95420?logo=ubuntu&logoColor=white">
+  <img alt="ROS 2 Jazzy" src="https://img.shields.io/badge/ROS%202-Jazzy-22314E?logo=ros&logoColor=white">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white">
+  <img alt="Dynamixel" src="https://img.shields.io/badge/Dynamixel-AX--12A%20%7C%20XL430-00979D">
+</p>
+
+</div>
+
 # Sistema de Clasificacion Pick & Place - PhantomX Pincher
 
 Este repositorio contiene los nodos y herramientas desarrolladas en ROS 2 para operar un brazo robotico PhantomX Pincher. El sistema integra vision artificial, cinematica inversa 3D y simulacion para identificar, recoger y clasificar objetos geometricos en sus respectivas canastas segun su color.
