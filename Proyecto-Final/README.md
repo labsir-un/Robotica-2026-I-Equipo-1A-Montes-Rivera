@@ -318,7 +318,8 @@ sudo cp scripts/phantom_sorting.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable phantom_sorting.service
 ```
-
+## 8. Videos de demostración
+Las demostraciones en video y registros del sistema en funcionamiento autónomo en la Raspberry Pi 5 con la HMI en PyQt5 se encuentran vinculadas en la driver [▶️ Ver video en Google Drive](https://drive.google.com/drive/folders/1WP0FnPwpMV6GNikxMBCA0uTSu9Bh9w-p?usp=sharing)
 ---
 
 > [!NOTE]
