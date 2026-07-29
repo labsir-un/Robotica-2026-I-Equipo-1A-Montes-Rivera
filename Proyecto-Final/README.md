@@ -31,14 +31,334 @@ Este repositorio contiene los nodos y herramientas desarrolladas en ROS 2 para o
 
 ## Modulos Principales (Core)
 
-### `sorting_node.py` (Nodo de Clasificacion)
-Este es el nodo central del sistema, encargado de la ejecucion de los movimientos fisicos y la toma de decisiones del brazo robotico.
-* **Maquina de Estados:** Implementa la logica automatizada de la tarea "Pick & Place", controlando las transiciones entre poses predefinidas como inicio (home), escaneo (scan), acercamiento (pre_pick/pre_drop), agarre (pick) y liberacion (drop).
-* **Cinematica Inversa 3D:** Calcula matematicamente los angulos exactos de las articulaciones (cintura, hombro, codo, muneca) de forma analitica y continua para alcanzar las coordenadas (X, Y, Z) requeridas.
-* **Integracion con Vision:** Se suscribe a los topicos de vision (`vision/coordenada_pieza` y `vision/color_pieza`) para saber a que posicion moverse y en que caneca (verde, azul, rojo o amarillo) depositar el objeto.
-* **Rutina de Seguridad:** Cuenta con una funcion de recuperacion (`_execute_recovery_routine`) que abre la pinza y eleva el brazo a una zona segura en caso de que ocurra un error de calculo cinematico o de agarre.
+# Sorting Node - Pick & Place Automatizado
+
+## Descripción
+
+`sorting_node.py` es un nodo de **ROS 2** encargado de controlar un robot **PhantomX Pincher** con una herramienta de **vacío** para realizar un proceso automático de clasificación de piezas mediante la técnica **Pick & Place**.
+
+El nodo recibe la posición y el color de una pieza detectada por un sistema de visión artificial, calcula la cinemática inversa del brazo robótico y ejecuta una secuencia de movimientos para recoger la pieza y depositarla en la caneca correspondiente.
 
 ---
+
+# Funcionamiento General
+
+El sistema sigue el siguiente flujo:
+
+```text
+Sistema de Visión
+      │
+      ├── Coordenadas (X,Y,Z)
+      └── Color
+              │
+              ▼
+        Sorting Node
+              │
+              ├── Calcula cinemática inversa
+              ├── Genera trayectoria
+              ├── Activa bomba de vacío
+              ├── Transporta la pieza
+              └── La deposita según el color
+```
+
+---
+
+# Arquitectura
+
+El nodo está compuesto por los siguientes módulos:
+
+- Recepción de información desde visión.
+- Cálculo de cinemática inversa.
+- Control de movimiento.
+- Control de la bomba de vacío.
+- Máquina de estados Pick & Place.
+- Rutina de recuperación ante errores.
+
+---
+
+# Parámetros del Robot
+
+Se definen las dimensiones principales del brazo:
+
+| Parámetro | Descripción |
+|-----------|-------------|
+| L1 | Longitud del brazo superior |
+| L2 | Longitud del antebrazo |
+| L3 | Longitud del gripper |
+
+También se configuran:
+
+- Pose Home
+- Pose Scan
+- Pose Recovery
+- Poses de aproximación a cada caneca
+
+---
+
+# Comunicación ROS2
+
+## Publicadores
+
+| Topic | Tipo | Función |
+|--------|------|---------|
+| `/pincher/command` | JointState | Envía posiciones articulares |
+| `/pincher/status` | String | Estado del robot |
+| `/pincher/vacuum` | String | Activa o desactiva la bomba de vacío |
+| `/visualization_marker` | Marker | Visualización en RViz |
+
+## Suscriptores
+
+| Topic | Tipo | Información |
+|--------|------|-------------|
+| `vision/coordenada_pieza` | Point | Posición de la pieza |
+| `vision/color_pieza` | String | Color detectado |
+
+---
+
+# Cálculo de Cinemática Inversa
+
+El método `compute_ik_3d()` calcula los ángulos articulares necesarios para que el extremo del robot alcance una posición `(X,Y,Z)`.
+
+El procedimiento consiste en:
+
+1. Convertir centímetros a metros.
+2. Calcular el ángulo de la base (`waist`).
+3. Calcular la posición de la muñeca considerando la longitud de la herramienta.
+4. Resolver analíticamente la cinemática inversa mediante relaciones trigonométricas.
+5. Obtener los ángulos:
+
+- Waist
+- Shoulder
+- Elbow
+- Wrist
+
+Si no existe una solución válida, la función devuelve `None`.
+
+---
+
+# Máquina de Estados
+
+Cada pieza sigue la siguiente secuencia:
+
+```text
+HOME
+ │
+ ▼
+SCAN
+ │
+ ▼
+PRE_PICK
+ │
+ ▼
+PICK
+ │
+ ▼
+VACUUM ON
+ │
+ ▼
+LIFT
+ │
+ ▼
+PRE_DROP
+ │
+ ▼
+DROP
+ │
+ ▼
+VACUUM OFF
+ │
+ ▼
+SCAN
+```
+
+---
+
+## 1. Scan
+
+El robot adopta una posición elevada que permite al sistema de visión detectar correctamente la pieza.
+
+---
+
+## 2. Pre Pick
+
+El brazo se aproxima verticalmente a una altura segura sobre la pieza.
+
+---
+
+## 3. Pick
+
+El robot desciende hasta la superficie del objeto.
+
+Al llegar:
+
+- activa la bomba de vacío,
+- espera unos milisegundos para asegurar la succión.
+
+---
+
+## 4. Lift
+
+La pieza se eleva verticalmente evitando colisiones con el entorno.
+
+---
+
+## 5. Pre Drop
+
+El robot se aproxima a la caneca correspondiente según el color detectado.
+
+Cada color posee una pose predefinida.
+
+---
+
+## 6. Drop
+
+El brazo desciende hasta la altura de liberación.
+
+Posteriormente:
+
+- se desactiva la bomba de vacío,
+- la pieza cae dentro de la caneca.
+
+---
+
+## 7. Retorno
+
+El robot vuelve a la pose de escaneo para esperar una nueva pieza.
+
+---
+
+# Clasificación por Color
+
+El sistema soporta cuatro colores:
+
+| Color | Caneca |
+|--------|---------|
+| Green | Frontal izquierda |
+| Blue | Frontal derecha |
+| Red | Lateral izquierda |
+| Yellow | Lateral derecha |
+
+Cada caneca posee coordenadas fijas en el espacio.
+
+---
+
+# Movimiento del Robot
+
+Los movimientos no son instantáneos.
+
+La función `animate_to_pose()` interpola entre la pose actual y la pose objetivo generando trayectorias suaves.
+
+Esto reduce:
+
+- vibraciones,
+- movimientos bruscos,
+- impactos mecánicos.
+
+---
+
+# Control de la Bomba de Vacío
+
+Durante el ciclo Pick & Place se publican dos comandos:
+
+```text
+VACUUM_ON
+```
+
+Activa la bomba y recoge la pieza.
+
+```text
+VACUUM_OFF
+```
+
+Desactiva la bomba y libera el objeto.
+
+---
+
+# Manejo de Errores
+
+Si ocurre alguno de los siguientes problemas:
+
+- no existe solución de cinemática inversa,
+- ocurre una excepción,
+- falla algún movimiento,
+
+el sistema ejecuta automáticamente una rutina de recuperación.
+
+La rutina realiza:
+
+1. apagar la bomba de vacío;
+2. mover el brazo a una posición segura;
+3. regresar a la pose de escaneo;
+4. quedar listo para un nuevo ciclo.
+
+---
+
+# Flujo Completo
+
+```text
+Inicio
+
+↓
+
+Esperar color
+
+↓
+
+Esperar coordenadas
+
+↓
+
+Calcular IK
+
+↓
+
+Mover a Pre Pick
+
+↓
+
+Mover a Pick
+
+↓
+
+Vacuum ON
+
+↓
+
+Lift
+
+↓
+
+Mover a Pre Drop
+
+↓
+
+Mover a Drop
+
+↓
+
+Vacuum OFF
+
+↓
+
+Regresar a Scan
+
+↓
+
+Esperar nueva pieza
+```
+
+---
+
+# Características Principales
+
+- Control mediante ROS 2.
+- Cálculo analítico de cinemática inversa 3D.
+- Clasificación automática por color.
+- Herramienta de agarre mediante vacío.
+- Trayectorias suaves por interpolación.
+- Máquina de estados para Pick & Place.
+- Rutina automática de recuperación de errores.
+- Fácil integración con sistemas de visión artificial.
 
 ## Entorno de Pruebas y Simulacion (Testing Tools)
 
