@@ -33,6 +33,14 @@ Herramienta disenada para probar la logica de clasificacion del sistema sin nece
 * **Mocking de Datos:** Publica coordenadas de prueba y colores directamente en los topicos de ROS 2 (`vision/coordenada_pieza` y `vision/color_pieza`), simulando que la camara encontro una pieza para que el robot inicie su rutina.
 * **Feedback Visual:** Al enviar la deteccion simulada, despliega simultaneamente un marcador visual 3D (utilizando mallas STL de cubos, cilindros, triangulos o pentagonos) en la interfaz de RViz en la coordenada indicada, facilitando ver que objeto intentara agarrar el brazo.
 
+### `go_to_tray_origin_node.py` (Nodo de Posicionamiento y Marcador)
+
+Este script define el nodo `GoToTrayOriginNode`, el cual es un nodo de prueba diseñado para mover el brazo robótico exactamente al centro de la plataforma blanca y mantener una referencia visual activa en el simulador RViz[cite: 7].
+
+* **Posicionamiento Exacto:** El nodo envía ángulos articulares predefinidos (cintura: 0.0 grados, hombro: +13.0 grados, codo: +129.0 grados, muñeca: +32.0 grados, pinza: 0.0 grados) mediante el tópico `/pincher/command`[cite: 7]. Esta configuración cinemática específica permite que el efector final alcance físicamente el origen de la bandeja (X=9.61cm, Z=1.50cm)[cite: 7].
+* **Marcador Visual (Esfera Roja):** Configura un marcador tridimensional de tipo esfera (`Marker.SPHERE`) de color rojo brillante y 4 cm de diámetro[cite: 7]. Este marcador se posiciona a 4 cm sobre el centro de la plataforma (X=0.096m, Y=0.0m, Z=0.04m) en el marco espacial "world", sirviendo como un objetivo visual nítido en RViz[cite: 7].
+* **Bucle de Ejecución Continua (2 Hz):** Implementa un temporizador (`timer_callback`) que se dispara cada 0.5 segundos[cite: 7]. En cada iteración, el nodo actualiza la marca de tiempo y vuelve a publicar la posición de la esfera roja, los ángulos de las articulaciones y un mensaje de estado en `/pincher/status` indicando el movimiento hacia la `zonaRecoleccion_link`[cite: 7]. Esto garantiza que tanto el simulador como el hardware mantengan la posición activa de forma constante[cite: 7].
+
 # Nodo de Visión de Máquina con YOLOv8 para ROS 2 (PhantomX Pincher)
 
 Este módulo es parte del paquete de control de un brazo robótico PhantomX Pincher en ROS 2 (Jazzy). Implementa un nodo de visión artificial que utiliza un modelo entrenado de YOLO (Ultralytics) para detectar piezas geométricas, calcular su centro en píxeles y realizar una transformación espacial para publicar sus coordenadas (X, Y) en centímetros relativas a la base del robot.
