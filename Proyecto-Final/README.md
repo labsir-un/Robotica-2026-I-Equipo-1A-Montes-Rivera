@@ -60,11 +60,11 @@ Herramienta disenada para probar la logica de clasificacion del sistema sin nece
 
 ### `go_to_tray_origin_node.py` (Nodo de Posicionamiento y Marcador)
 
-Este script define el nodo `GoToTrayOriginNode`, el cual es un nodo de prueba diseñado para mover el brazo robótico exactamente al centro de la plataforma blanca y mantener una referencia visual activa en el simulador RViz[cite: 7].
+Este script define el nodo `GoToTrayOriginNode`, el cual es un nodo de prueba diseñado para mover el brazo robótico exactamente al centro de la plataforma blanca y mantener una referencia visual activa en el simulador RViz.
 
-* **Posicionamiento Exacto:** El nodo envía ángulos articulares predefinidos (cintura: 0.0 grados, hombro: +13.0 grados, codo: +129.0 grados, muñeca: +32.0 grados, pinza: 0.0 grados) mediante el tópico `/pincher/command`[cite: 7]. Esta configuración cinemática específica permite que el efector final alcance físicamente el origen de la bandeja (X=9.61cm, Z=1.50cm)[cite: 7].
-* **Marcador Visual (Esfera Roja):** Configura un marcador tridimensional de tipo esfera (`Marker.SPHERE`) de color rojo brillante y 4 cm de diámetro[cite: 7]. Este marcador se posiciona a 4 cm sobre el centro de la plataforma (X=0.096m, Y=0.0m, Z=0.04m) en el marco espacial "world", sirviendo como un objetivo visual nítido en RViz[cite: 7].
-* **Bucle de Ejecución Continua (2 Hz):** Implementa un temporizador (`timer_callback`) que se dispara cada 0.5 segundos[cite: 7]. En cada iteración, el nodo actualiza la marca de tiempo y vuelve a publicar la posición de la esfera roja, los ángulos de las articulaciones y un mensaje de estado en `/pincher/status` indicando el movimiento hacia la `zonaRecoleccion_link`[cite: 7]. Esto garantiza que tanto el simulador como el hardware mantengan la posición activa de forma constante[cite: 7].
+* **Posicionamiento Exacto:** El nodo envía ángulos articulares predefinidos (cintura: 0.0 grados, hombro: +13.0 grados, codo: +129.0 grados, muñeca: +32.0 grados, pinza: 0.0 grados) mediante el tópico `/pincher/command`[cite: 7]. Esta configuración cinemática específica permite que el efector final alcance físicamente el origen de la bandeja.
+* **Marcador Visual (Esfera Roja):** Configura un marcador tridimensional de tipo esfera (`Marker.SPHERE`) de color rojo brillante y 4 cm de diámetro. Este marcador se posiciona a 4 cm sobre el centro de la plataforma (X=0.096m, Y=0.0m, Z=0.04m) en el marco espacial "world", sirviendo como un objetivo visual nítido en RViz.
+* **Bucle de Ejecución Continua (2 Hz):** Implementa un temporizador (`timer_callback`) que se dispara cada 0.5 segundos[cite: 7]. En cada iteración, el nodo actualiza la marca de tiempo y vuelve a publicar la posición de la esfera roja, los ángulos de las articulaciones y un mensaje de estado en `/pincher/status` indicando el movimiento hacia la `zonaRecoleccion_link`. Esto garantiza que tanto el simulador como el hardware mantengan la posición activa de forma constante.
 
 # Nodo de Visión de Máquina con YOLOv8 para ROS 2 (PhantomX Pincher)
 
@@ -213,7 +213,7 @@ Por esta razón, se emplea **Google Colab**, una plataforma en la nube que propo
 Una vez preparado el entorno de trabajo y cargado el conjunto de datos en Google Colab, el entrenamiento del modelo se inicia mediante el siguiente comando:
 
 ```bash
-yolo task=detect mode=train model=yolov8n.pt data=data.yaml epochs=100 imgsz=640
+yolo task=detect mode=train model=yolov8n.pt data=data.yaml epochs=100 imgsz=520
 ```
 
 Cada uno de los parámetros cumple una función específica:
@@ -225,7 +225,7 @@ Cada uno de los parámetros cumple una función específica:
 | `model=yolov8n.pt` | Utiliza el modelo preentrenado **YOLOv8 Nano**, una versión ligera y rápida basada en aprendizaje por transferencia (*Transfer Learning*). |
 | `data=data.yaml` | Carga la configuración del conjunto de datos definida en el archivo `data.yaml`. |
 | `epochs=100` | Define que el modelo recorrerá el conjunto de entrenamiento 100 veces para optimizar sus parámetros. |
-| `imgsz=640` | Establece una resolución de entrada de **640 × 640 píxeles** para todas las imágenes. |
+| `imgsz=520` | Establece una resolución de entrada de **640 × 640 píxeles** para todas las imágenes. |
 
 El uso de un modelo preentrenado permite que la red neuronal aproveche conocimientos previamente adquiridos sobre características visuales generales, como bordes, texturas y formas, acelerando el proceso de aprendizaje y mejorando el rendimiento con un número reducido de imágenes.
 
