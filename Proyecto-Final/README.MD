@@ -287,9 +287,9 @@ yolo task=detect mode=train model=yolov8n.pt data=data.yaml epochs=100 imgsz=520
 
 Con cada época el *loss* disminuye y la precisión aumenta; la mejor versión sobre **validación** se guarda como `best.pt`. El equipo entrenó dos variantes locales (`best_piezascolor.pt`, `best_piezasnegras.pt`) y re-entrenó el modelo en la plataforma Roboflow para la inferencia por API de la línea MoveIt (§11).
 
-![Gráficas de entrenamiento](Imagenes/metricas_entrenamiento.png)
 
-![Ejemplo de detección del modelo](Imagenes/ejemplo_deteccion_modelo.png)
+
+![Ejemplo de detección del modelo](https://github.com/labsir-un/Robotica-2026-I-Equipo-1A-Montes-Rivera/blob/main/Proyecto-Final/deteccion.jpeg)
 
 ---
 
