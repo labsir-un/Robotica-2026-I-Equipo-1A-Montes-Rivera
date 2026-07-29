@@ -79,7 +79,8 @@ El primer paso consiste en crear un nuevo proyecto en **Roboflow** seleccionando
 
 - Cubo
 - Cilindro
-- Esfera
+- Rectangulo
+- Pentagono
 
 Posteriormente, se cargan las imágenes o videos capturados con la cámara del robot. Si se utiliza un video, Roboflow extrae automáticamente fotogramas a intervalos regulares para convertirlos en imágenes aptas para el entrenamiento.
 
@@ -103,7 +104,7 @@ Esta etapa mejora la capacidad del modelo para generalizar y reconocer objetos e
 
 Se realizan automáticamente tareas como:
 
-- Redimensionar todas las imágenes a un tamaño uniforme (generalmente **640 × 640 píxeles** para YOLO).
+- Redimensionar todas las imágenes a un tamaño uniforme (generalmente **520 × 520 píxeles** para YOLO).
 - Corregir la orientación de las imágenes cuando sea necesario.
 
 ### Aumento de datos
@@ -114,7 +115,7 @@ Roboflow genera nuevas versiones de las imágenes originales aplicando distintas
 - Rotaciones.
 - Adición de ruido.
 
-Estas modificaciones permiten simular diferentes condiciones de iluminación, orientación de los objetos y calidad de la cámara, aumentando la robustez del modelo. Por ejemplo, un conjunto de **100 imágenes originales** puede ampliarse hasta aproximadamente **300 imágenes** para entrenamiento.
+Estas modificaciones permiten simular diferentes condiciones de iluminación, orientación de los objetos y calidad de la cámara, aumentando la robustez del modelo. Por ejemplo, un conjunto de **100 imágenes originales** puede ampliarse hasta aproximadamente **100 imágenes** para entrenamiento.
 
 ---
 
@@ -124,8 +125,8 @@ Una vez procesadas las imágenes, Roboflow organiza automáticamente el dataset 
 
 | Conjunto | Porcentaje | Función |
 |----------|-----------:|---------|
-| **Train** | ~70 % | Utilizado para entrenar el modelo. |
-| **Valid** | ~20 % | Empleado para evaluar el rendimiento durante el entrenamiento y ajustar parámetros. |
+| **Train** | ~80 % | Utilizado para entrenar el modelo. |
+| **Valid** | ~10 % | Empleado para evaluar el rendimiento durante el entrenamiento y ajustar parámetros. |
 | **Test** | ~10 % | Reservado para medir el desempeño final del modelo con imágenes nunca vistas. |
 
 Esta separación evita el sobreajuste y permite obtener una evaluación objetiva del detector.
@@ -157,8 +158,113 @@ Donde:
 - **labels/** almacena los archivos `.txt` con las coordenadas de las cajas delimitadoras y las clases correspondientes.
 - **data.yaml** especifica la ubicación del dataset y las clases que utilizará YOLOv8 durante el entrenamiento.
 
+# Entrenamiento del modelo YOLOv8
 
-##  Características Principales
+## 1. Contenido del archivo exportado y configuración de `data.yaml`
+
+Al descomprimir el archivo `.zip` exportado desde **Roboflow**, se obtiene la estructura completa del conjunto de datos, organizada en carpetas para entrenamiento, validación y prueba, además del archivo de configuración `data.yaml`.
+
+```text
+dataset/
+├── images/
+│   ├── train/
+│   ├── valid/
+│   └── test/
+├── labels/
+│   ├── train/
+│   ├── valid/
+│   └── test/
+└── data.yaml
+```
+
+El archivo `data.yaml` es el encargado de proporcionar a YOLOv8 la información necesaria para localizar y utilizar correctamente el conjunto de datos. En él se especifica:
+
+- La ubicación de las imágenes de entrenamiento, validación y prueba.
+- El número total de clases que deberá aprender el modelo.
+- El nombre de cada una de las clases definidas en el dataset.
+
+Un ejemplo de este archivo es el siguiente:
+
+```yaml
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+
+names:
+  0: cubo
+  1: cilindro
+  2: esfera
+```
+
+---
+
+## 2. Entorno de entrenamiento: Google Colab
+
+El entrenamiento de una red neuronal implica ejecutar millones de operaciones matemáticas para ajustar los parámetros del modelo. Aunque este proceso puede realizarse utilizando únicamente el procesador (**CPU**) de un computador, el tiempo de ejecución suele ser muy elevado.
+
+Por esta razón, se emplea **Google Colab**, una plataforma en la nube que proporciona acceso gratuito a unidades de procesamiento gráfico (**GPU**). Estas están diseñadas para realizar cálculos paralelos de manera eficiente, reduciendo significativamente el tiempo de entrenamiento, que puede pasar de varias horas o incluso días a unos pocos minutos u horas, dependiendo del tamaño del conjunto de datos.
+
+---
+
+## 3. Configuración del entrenamiento
+
+Una vez preparado el entorno de trabajo y cargado el conjunto de datos en Google Colab, el entrenamiento del modelo se inicia mediante el siguiente comando:
+
+```bash
+yolo task=detect mode=train model=yolov8n.pt data=data.yaml epochs=100 imgsz=640
+```
+
+Cada uno de los parámetros cumple una función específica:
+
+| Parámetro | Descripción |
+|-----------|-------------|
+| `task=detect` | Indica que la tarea corresponde a detección de objetos. |
+| `mode=train` | Especifica que el modelo se entrenará. |
+| `model=yolov8n.pt` | Utiliza el modelo preentrenado **YOLOv8 Nano**, una versión ligera y rápida basada en aprendizaje por transferencia (*Transfer Learning*). |
+| `data=data.yaml` | Carga la configuración del conjunto de datos definida en el archivo `data.yaml`. |
+| `epochs=100` | Define que el modelo recorrerá el conjunto de entrenamiento 100 veces para optimizar sus parámetros. |
+| `imgsz=640` | Establece una resolución de entrada de **640 × 640 píxeles** para todas las imágenes. |
+
+El uso de un modelo preentrenado permite que la red neuronal aproveche conocimientos previamente adquiridos sobre características visuales generales, como bordes, texturas y formas, acelerando el proceso de aprendizaje y mejorando el rendimiento con un número reducido de imágenes.
+
+---
+
+## 4. Proceso de entrenamiento
+
+El entrenamiento se desarrolla de forma iterativa a lo largo de las épocas (*epochs*).
+
+Durante la primera época, el modelo realiza predicciones con un alto nivel de error, ya que aún no ha aprendido a identificar correctamente los objetos presentes en las imágenes. Estas predicciones se comparan con las etiquetas reales generadas en Roboflow y, a partir de esa diferencia, se calcula una función de pérdida (*Loss*), la cual cuantifica el error cometido.
+
+Posteriormente, mediante algoritmos de optimización, la red neuronal ajusta sus parámetros internos para reducir dicho error. Este procedimiento se repite en cada época hasta que el modelo alcanza un desempeño cada vez más preciso.
+
+En términos generales:
+
+- El valor de **Loss** disminuye progresivamente.
+- La precisión del modelo aumenta conforme avanza el entrenamiento.
+- Las predicciones se aproximan cada vez más a las etiquetas reales del conjunto de datos.
+
+---
+
+## 5. Generación del modelo `best.pt`
+
+Durante todo el entrenamiento, YOLOv8 guarda periódicamente diferentes versiones del modelo.
+
+Al finalizar las épocas establecidas, el sistema evalúa cuál de esas versiones obtuvo el mejor desempeño utilizando el conjunto de **validación**, es decir, imágenes que no fueron empleadas directamente para el aprendizaje, sino únicamente para medir la capacidad de generalización del modelo.
+
+La versión con mejores resultados se almacena en el archivo:
+
+```text
+best.pt
+```
+
+Este archivo contiene los **pesos entrenados** de la red neuronal y representa el modelo final que posteriormente será utilizado para realizar inferencias.
+
+En aplicaciones robóticas, como la integración con **ROS 2**, el archivo `best.pt` se carga en el nodo encargado de la detección de objetos, permitiendo que el robot identifique y localice los elementos del entorno en tiempo real mediante la cámara.
+
+
+##  Características Principales Del modelo 
 
 - **Inferencia en Tiempo Real:** Detección de objetos usando un modelo personalizado (`best.pt`) de YOLO.
 - **Transformación Espacial 2D:** Convierte el centro del bounding box (píxeles) a coordenadas del mundo real (centímetros).
