@@ -7,10 +7,10 @@ Este repositorio contiene los nodos y herramientas desarrolladas en ROS 2 para o
 ## Modulos Principales (Core)
 
 ### `sorting_node.py` (Nodo de Clasificacion)
-Este es el nodo central del sistema, encargado de la ejecucion de los movimientos fisicos y la toma de decisiones del brazo robotico[cite: 2].
+Este es el nodo central del sistema, encargado de la ejecucion de los movimientos fisicos y la toma de decisiones del brazo robotico.
 * **Maquina de Estados:** Implementa la logica automatizada de la tarea "Pick & Place", controlando las transiciones entre poses predefinidas como inicio (home), escaneo (scan), acercamiento (pre_pick/pre_drop), agarre (pick) y liberacion (drop).
 * **Cinematica Inversa 3D:** Calcula matematicamente los angulos exactos de las articulaciones (cintura, hombro, codo, muneca) de forma analitica y continua para alcanzar las coordenadas (X, Y, Z) requeridas.
-* **Integracion con Vision:** Se suscribe a los topicos de vision (`vision/coordenada_pieza` y `vision/color_pieza`) para saber a que posicion moverse y en que caneca (verde, azul, rojo o amarillo) depositar el objeto[cite: 2].
+* **Integracion con Vision:** Se suscribe a los topicos de vision (`vision/coordenada_pieza` y `vision/color_pieza`) para saber a que posicion moverse y en que caneca (verde, azul, rojo o amarillo) depositar el objeto.
 * **Rutina de Seguridad:** Cuenta con una funcion de recuperacion (`_execute_recovery_routine`) que abre la pinza y eleva el brazo a una zona segura en caso de que ocurra un error de calculo cinematico o de agarre.
 
 ---
@@ -25,7 +25,7 @@ Script de validacion disenado para comprobar el correcto funcionamiento del hard
 ### `spawn_object.py` (Generador de Objetos 3D)
 Comando de terminal interactivo utilizado para poblar el entorno de simulacion visual.
 * **Insercion de Mallas STL:** Permite publicar figuras 3D como cubos o cilindros dentro del entorno virtual.
-* **Posicionamiento Estricto:** Por defecto, coloca las figuras apoyadas sobre la plataforma blanca del robot, en el origen exacto (X=9.6cm, Z=2.75cm)[cite: 3].
+* **Posicionamiento Estricto:** Por defecto, coloca las figuras apoyadas sobre la plataforma blanca del robot, en el origen exacto (X=9.6cm, Z=2.75cm).
 * **Configuracion Dinamica:** Acepta argumentos de linea de comandos para modificar rapidamente la forma (`--shape`), el color (`--color`), la escala (`--scale`), la posicion (X, Y, Z) y la rotacion (roll, pitch, yaw) del objeto simulado.
 
 ### `test_block_publisher.py` (Simulador de Deteccion Visual)
